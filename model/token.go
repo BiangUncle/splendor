@@ -46,6 +46,16 @@ func InitTokenStack() {
 	defaultTokenStack[TokenIdxGoldJoker] = GoldJokerTokenNumber
 }
 
+// CreatANewTokenStack 创建一个新的桌面宝石堆
+func CreatANewTokenStack() TokenStack {
+	return defaultTokenStack.Copy()
+}
+
+// CreateEmptyTokenStack 创建一个空白的宝石堆数组
+func CreateEmptyTokenStack() TokenStack {
+	return make(TokenStack, TokenTypeNumber)
+}
+
 // takeToken 拿走一定数量的宝石
 func (s TokenStack) takeToken(tokenId int, num int) (TokenStack, error) {
 	// 判断是否拿得到
@@ -60,17 +70,33 @@ func (s TokenStack) takeToken(tokenId int, num int) (TokenStack, error) {
 	return ret, nil
 }
 
+// TakeThreeTokens 拿取三个不同宝石
 func (s TokenStack) TakeThreeTokens(tokens TokenStack) (TokenStack, error) {
 	// 判断是否拿得到
-	ret := TokenStack{}
+	ret := make(TokenStack, TokenTypeNumber)
 
 	for idx, v := range tokens {
 		if s[idx] < v {
 			return nil, errors.New(fmt.Sprintf("不够拿宝石，需要 %d 个，只有 %d 个。", v, s[idx]))
 		}
-		ret[idx]++
-		s[idx]--
+		ret[idx] += v
+		s[idx] -= v
 	}
+
+	return ret, nil
+}
+
+// TakeDoubleTokens 拿取两个不同宝石
+func (s TokenStack) TakeDoubleTokens(tokenIdx int) (TokenStack, error) {
+	// 判断是否拿得到
+	ret := make(TokenStack, TokenTypeNumber)
+
+	if s[tokenIdx] < 4 {
+		return nil, errors.New(fmt.Sprintf("宝石不够 4 个，没办法一次拿两个，目前只剩 %d 个。", s[tokenIdx]))
+	}
+
+	ret[tokenIdx] += 2
+	s[tokenIdx] -= 2
 
 	return ret, nil
 }
@@ -81,10 +107,6 @@ func (s TokenStack) Add(tokens TokenStack) {
 		s[idx] += v
 	}
 	return
-}
-
-func CreatANewTokenStack() TokenStack {
-	return defaultTokenStack.Copy()
 }
 
 func (s TokenStack) Copy() TokenStack {

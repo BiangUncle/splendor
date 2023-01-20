@@ -7,6 +7,7 @@ import (
 	"strconv"
 )
 
+// ReadCsv 读取 csv 文件
 func ReadCsv(filepath string) ([]string, [][]string) {
 	//打开文件(只读模式)，创建io.read接口实例
 	opencast, err := os.Open(filepath)
@@ -23,7 +24,7 @@ func ReadCsv(filepath string) ([]string, [][]string) {
 	log.Println(read)
 
 	//读取所有内容
-	ReadAll, err := ReadCsv.ReadAll() //返回切片类型：[[s s ds] [a a a]]
+	ReadAll, _ := ReadCsv.ReadAll() //返回切片类型：[[s s ds] [a a a]]
 	log.Println(ReadAll)
 
 	/*
@@ -36,6 +37,7 @@ func ReadCsv(filepath string) ([]string, [][]string) {
 	return read, ReadAll
 }
 
+// ToInt 字符串转数字
 func ToInt(s string) int {
 	i, err := strconv.Atoi(s)
 	if err != nil {
@@ -44,6 +46,7 @@ func ToInt(s string) int {
 	return i
 }
 
+// LoadDefaultDevelopmentCard 加载默认发展卡
 func LoadDefaultDevelopmentCard() error {
 	_, rows := ReadCsv("../csv/dev_card.csv")
 	defaultDevelopmentCardStacks = &DevelopmentCardStacks{}
@@ -77,6 +80,7 @@ func LoadDefaultDevelopmentCard() error {
 	return nil
 }
 
+// LoadDefaultNobleTiles 加载默认贵族卡
 func LoadDefaultNobleTiles() error {
 	_, rows := ReadCsv("../csv/noble_tile.csv")
 
