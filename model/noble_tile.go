@@ -1,6 +1,9 @@
 package model
 
-import "math/rand"
+import (
+	"fmt"
+	"math/rand"
+)
 
 const NobleTitleNumber = 10
 
@@ -20,15 +23,23 @@ func CreateANewNobleTilesStack() NobleTilesStack {
 }
 
 // Copy 复制
-func (n NobleTilesStack) Copy() NobleTilesStack {
-	cpy := make(NobleTilesStack, len(n))
-	copy(cpy, n)
+func (s NobleTilesStack) Copy() NobleTilesStack {
+	cpy := make(NobleTilesStack, len(s))
+	copy(cpy, s)
 	return cpy
 }
 
-func ShuffleNobleTitle(nobleTitles []NobleTile) []NobleTile {
-	rand.Shuffle(len(nobleTitles), func(i, j int) {
-		nobleTitles[i], nobleTitles[j] = nobleTitles[j], nobleTitles[i]
+// Shuffle 打乱牌堆
+func (s NobleTilesStack) Shuffle() {
+	rand.Shuffle(len(s), func(i, j int) {
+		s[i], s[j] = s[j], s[i]
 	})
-	return nobleTitles
+}
+
+func (s NobleTilesStack) ShowIdxInfo() {
+	idxInfo := make([]int, len(s))
+	for i, noble := range s {
+		idxInfo[i] = noble.Idx
+	}
+	fmt.Printf("%+v\n", idxInfo)
 }

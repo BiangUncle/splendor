@@ -32,4 +32,5 @@ func CreateANewTable() *Table {
 
 func (t *Table) Shuffle() {
 	t.DevelopmentCardStacks.Shuffle()
+	t.NobleTilesStack.Shuffle()
 }

@@ -20,12 +20,20 @@ func TestPlayerAddToken(t *testing.T) {
 	t.Logf("%+v", table)
 }
 
-func TestShuffle(t *testing.T) {
+func TestShuffleDevCard(t *testing.T) {
 	table := model.CreateANewTable()
 	t.Logf("%+v", table)
 
 	table.DevelopmentCardStacks.ShowIdxInfo()
 	table.Shuffle()
 	table.DevelopmentCardStacks.ShowIdxInfo()
+}
 
+func TestShuffleNobleTile(t *testing.T) {
+	table := model.CreateANewTable()
+	t.Logf("%+v", table)
+
+	table.NobleTilesStack.ShowIdxInfo()
+	table.Shuffle()
+	table.NobleTilesStack.ShowIdxInfo()
 }
