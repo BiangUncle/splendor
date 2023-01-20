@@ -52,3 +52,30 @@ func TestTakeTopCard(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestPurchaseDevelopmentCard(t *testing.T) {
+	table := model.CreateANewTable()
+	t.Logf("%+v\n", table.RevealedDevelopmentCards.ShowIdxInfo())
+	t.Logf("%+v\n", table.DevelopmentCardStacks.ShowIdxInfo())
+
+	err := table.Reveal()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Logf("%+v\n", table.RevealedDevelopmentCards.ShowIdxInfo())
+	t.Logf("%+v\n", table.DevelopmentCardStacks.ShowIdxInfo())
+
+	player1 := model.CreateANewPlayer()
+	player1.ShowPlayerInfo()
+
+	err = PurchaseDevelopmentCard(player1, table, 10001)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Logf("%+v\n", table.RevealedDevelopmentCards.ShowIdxInfo())
+	t.Logf("%+v\n", table.DevelopmentCardStacks.ShowIdxInfo())
+
+	player1.ShowPlayerInfo()
+}

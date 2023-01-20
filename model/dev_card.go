@@ -80,12 +80,74 @@ func (s DevelopmentCardStack) Shuffle() {
 }
 
 // ShowIdxInfo 展示牌的索引
-func (s DevelopmentCardStack) ShowIdxInfo() {
+func (s DevelopmentCardStack) ShowIdxInfo() string {
 	idxInfo := make([]int, len(s))
 	for i, card := range s {
-		idxInfo[i] = card.Idx
+		if card == nil {
+			idxInfo[i] = -1
+		} else {
+			idxInfo[i] = card.Idx
+		}
 	}
-	fmt.Printf("%+v\n", idxInfo)
+	//fmt.Printf("%+v\n", idxInfo)
+	return fmt.Sprintf("%+v", idxInfo)
+}
+
+// IsExistCard 牌堆中是否有这张牌
+func (s DevelopmentCardStack) IsExistCard(cardIdx int) bool {
+	for _, card := range s {
+		if card == nil {
+			continue
+		}
+		if card.Idx == cardIdx {
+			return true
+		}
+	}
+	return false
+}
+
+// TakeCard 拿走一张卡牌，并置空
+func (s *DevelopmentCardStack) TakeCard(cardIdx int) (*DevelopmentCard, bool) {
+	selectedIdx := -1
+
+	for idx, card := range *s {
+		if card == nil {
+			continue
+		}
+		if card.Idx == cardIdx {
+			selectedIdx = idx
+			break
+		}
+	}
+
+	if selectedIdx != -1 {
+		ret := (*s)[selectedIdx]
+		(*s)[selectedIdx] = nil
+		return ret, true
+	}
+
+	return nil, false
+}
+
+// PutNewCardToEmptySite 把一张新的卡放在空的位置
+func (s *DevelopmentCardStack) PutNewCardToEmptySite(newCard *DevelopmentCard) error {
+
+	selectedIdx := -1
+
+	for idx, card := range *s {
+		if card == nil {
+			selectedIdx = idx
+			break
+		}
+	}
+
+	if selectedIdx == -1 {
+		return errors.New(fmt.Sprintf("这个地方没有地方可以放卡呀，状态：%+v。", *s))
+	}
+
+	(*s)[selectedIdx] = newCard
+
+	return nil
 }
 
 // Shuffle 打乱牌堆
@@ -96,10 +158,8 @@ func (s *DevelopmentCardStacks) Shuffle() {
 }
 
 // ShowIdxInfo 展示牌的索引
-func (s *DevelopmentCardStacks) ShowIdxInfo() {
-	s.TopStack.ShowIdxInfo()
-	s.MiddleStack.ShowIdxInfo()
-	s.BottomStack.ShowIdxInfo()
+func (s *DevelopmentCardStacks) ShowIdxInfo() string {
+	return s.TopStack.ShowIdxInfo() + s.MiddleStack.ShowIdxInfo() + s.BottomStack.ShowIdxInfo()
 }
 
 // TakeTopCard 翻第一张牌
@@ -120,6 +180,28 @@ func (s *DevelopmentCardStack) TakeTopNCard(n int) (DevelopmentCardStack, error)
 	}
 
 	ret := (*s)[:n]
-	*s = (*s)[n+1:]
+	*s = (*s)[n:]
 	return ret, nil
+}
+
+// IsExistCard 牌堆中是否有这张牌
+func (s *DevelopmentCardStacks) IsExistCard(cardIdx int) bool {
+	return s.TopStack.IsExistCard(cardIdx) || s.MiddleStack.IsExistCard(cardIdx) || s.BottomStack.IsExistCard(cardIdx)
+}
+
+// TakeCard 拿走一张卡牌，并置空
+func (s *DevelopmentCardStacks) TakeCard(cardIdx int) (*DevelopmentCard, int, bool) {
+	card, success := s.TopStack.TakeCard(cardIdx)
+	if success {
+		return card, DevelopmentCardLevelTop, true
+	}
+	card, success = s.MiddleStack.TakeCard(cardIdx)
+	if success {
+		return card, DevelopmentCardLevelMiddle, true
+	}
+	card, success = s.BottomStack.TakeCard(cardIdx)
+	if success {
+		return card, DevelopmentCardLevelBottom, true
+	}
+	return nil, -1, false
 }

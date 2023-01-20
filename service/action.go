@@ -1,6 +1,10 @@
 package service
 
-import "splendor/model"
+import (
+	"errors"
+	"fmt"
+	"splendor/model"
+)
 
 // TurnAction 玩家进行动作
 func TurnAction(p *model.Player, t *model.Table, action int) error {
@@ -21,5 +25,31 @@ func TurnAction(p *model.Player, t *model.Table, action int) error {
 	// 购买一张发展牌
 	case 4: // 预购/摸取一张发展牌
 	}
+	return nil
+}
+
+// PurchaseDevelopmentCard 玩家购买场上的发展卡
+func PurchaseDevelopmentCard(p *model.Player, t *model.Table, cardIdx int) error {
+
+	// 先判断场上是否有这个牌
+	if !t.IsExistRevealedDevelopmentCard(cardIdx) {
+		return errors.New(fmt.Sprintf("场上没这个牌，目标 %d，存在的牌 %+v", cardIdx, t.RevealedDevelopmentCards.ShowIdxInfo()))
+	}
+
+	// 移除场上的牌
+	card, cardLevel, ok := t.RevealedDevelopmentCards.TakeCard(10001)
+	if !ok {
+		return errors.New(fmt.Sprintf("没有拿到卡牌啊，咋回事"))
+	}
+
+	// 补充场上的牌
+	err := t.ReplaceRevealedDevelopmentCard(cardLevel)
+	if err != nil {
+		return err
+	}
+
+	// 给玩家添加卡牌
+	p.AddDevelopmentCard(card)
+
 	return nil
 }

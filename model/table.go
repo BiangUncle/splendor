@@ -1,6 +1,8 @@
 package model
 
 import (
+	"errors"
+	"fmt"
 	"time"
 )
 
@@ -94,4 +96,48 @@ func (t *Table) Reveal() (err error) {
 		return
 	}
 	return nil
+}
+
+// IsExistRevealedDevelopmentCard 判断这个卡是否在场上
+func (t *Table) IsExistRevealedDevelopmentCard(idx int) bool {
+	return t.RevealedDevelopmentCards.IsExistCard(idx)
+}
+
+// ReplaceRevealedDevelopmentCard 补充场上的发展卡
+func (t *Table) ReplaceRevealedDevelopmentCard(cardLevel int) error {
+
+	switch cardLevel {
+	case DevelopmentCardLevelTop:
+		card, err := t.DevelopmentCardStacks.TopStack.TakeTopCard()
+		if err != nil {
+			return err
+		}
+		err = t.RevealedDevelopmentCards.TopStack.PutNewCardToEmptySite(card)
+		if err != nil {
+			return err
+		}
+		return nil
+	case DevelopmentCardLevelMiddle:
+		card, err := t.DevelopmentCardStacks.MiddleStack.TakeTopCard()
+		if err != nil {
+			return err
+		}
+		err = t.RevealedDevelopmentCards.MiddleStack.PutNewCardToEmptySite(card)
+		if err != nil {
+			return err
+		}
+		return nil
+	case DevelopmentCardLevelBottom:
+		card, err := t.DevelopmentCardStacks.BottomStack.TakeTopCard()
+		if err != nil {
+			return err
+		}
+		err = t.RevealedDevelopmentCards.BottomStack.PutNewCardToEmptySite(card)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+
+	return errors.New(fmt.Sprintf("你这个发展卡等级好像有问题，等级 = %d", cardLevel))
 }

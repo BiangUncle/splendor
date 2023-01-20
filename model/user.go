@@ -21,8 +21,19 @@ func CreateANewPlayer() *Player {
 	}
 }
 
+// AddTokens 玩家获取宝石
 func (p *Player) AddTokens(tokens TokenStack) {
 	p.Tokens.Add(tokens)
+	return
+}
+
+// AddDevelopmentCard 玩家获取发展卡
+func (p *Player) AddDevelopmentCard(card *DevelopmentCard) {
+	// 发展卡增加这个
+	p.DevelopmentCards = append(p.DevelopmentCards, card)
+	p.Prestige += card.Prestige
+	p.Bonuses[card.BonusType]++
+
 	return
 }
 
@@ -30,9 +41,8 @@ func (p *Player) ShowPlayerInfo() {
 	fmt.Printf("|=======================\n")
 	fmt.Printf("| %+v\n", p.Tokens)
 	fmt.Printf("| %+v\n", p.Bonuses)
-	fmt.Printf("| %+v\n", p.DevelopmentCards)
+	fmt.Printf("| %+v\n", p.DevelopmentCards.ShowIdxInfo())
 	fmt.Printf("| %+v\n", p.NobleTitles)
 	fmt.Printf("| %+v\n", p.Prestige)
 	fmt.Printf("|=======================\n")
-
 }
