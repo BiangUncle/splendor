@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 )
@@ -47,9 +48,9 @@ func CreateANewDevelopmentCardStacks() *DevelopmentCardStacks {
 
 func CreateEmptyDevelopmentCardStacks() *DevelopmentCardStacks {
 	return &DevelopmentCardStacks{
-		TopStack:    make(DevelopmentCardStack, RevealedDevelopmentCardPerLevel),
-		MiddleStack: make(DevelopmentCardStack, RevealedDevelopmentCardPerLevel),
-		BottomStack: make(DevelopmentCardStack, RevealedDevelopmentCardPerLevel),
+		TopStack:    make(DevelopmentCardStack, RevealedDevelopmentCardNumPerLevel),
+		MiddleStack: make(DevelopmentCardStack, RevealedDevelopmentCardNumPerLevel),
+		BottomStack: make(DevelopmentCardStack, RevealedDevelopmentCardNumPerLevel),
 	}
 }
 
@@ -78,6 +79,7 @@ func (s DevelopmentCardStack) Shuffle() {
 	})
 }
 
+// ShowIdxInfo 展示牌的索引
 func (s DevelopmentCardStack) ShowIdxInfo() {
 	idxInfo := make([]int, len(s))
 	for i, card := range s {
@@ -93,9 +95,31 @@ func (s *DevelopmentCardStacks) Shuffle() {
 	s.BottomStack.Shuffle()
 }
 
-// ShowIdxInfo 打乱牌堆
+// ShowIdxInfo 展示牌的索引
 func (s *DevelopmentCardStacks) ShowIdxInfo() {
 	s.TopStack.ShowIdxInfo()
 	s.MiddleStack.ShowIdxInfo()
 	s.BottomStack.ShowIdxInfo()
+}
+
+// TakeTopCard 翻第一张牌
+func (s *DevelopmentCardStack) TakeTopCard() (*DevelopmentCard, error) {
+
+	ret, err := s.TakeTopNCard(1)
+	if err != nil {
+		return nil, err
+	}
+	return ret[0], nil
+
+}
+
+// TakeTopNCard 翻顶上 n 张牌
+func (s *DevelopmentCardStack) TakeTopNCard(n int) (DevelopmentCardStack, error) {
+	if len(*s) < n {
+		return nil, errors.New(fmt.Sprintf("没有牌可以翻， 需要 %d 张，但是只有 %d 张。", n, len(*s)))
+	}
+
+	ret := (*s)[:n]
+	*s = (*s)[n+1:]
+	return ret, nil
 }

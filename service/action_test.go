@@ -37,3 +37,18 @@ func TestShuffleNobleTile(t *testing.T) {
 	table.Shuffle()
 	table.NobleTilesStack.ShowIdxInfo()
 }
+
+func TestTakeTopCard(t *testing.T) {
+	table := model.CreateANewTable()
+	t.Logf("%+v", table)
+
+	err := table.Reveal()
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = table.Reveal()
+	if err != nil {
+		t.Error(err)
+	}
+}

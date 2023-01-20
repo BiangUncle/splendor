@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 )
@@ -15,7 +16,7 @@ type NobleTile struct {
 
 var defaultNobleTilesStack NobleTilesStack
 
-type NobleTilesStack []NobleTile
+type NobleTilesStack []*NobleTile
 
 // CreateANewNobleTilesStack 创建一个新的贵族堆
 func CreateANewNobleTilesStack() NobleTilesStack {
@@ -42,4 +43,26 @@ func (s NobleTilesStack) ShowIdxInfo() {
 		idxInfo[i] = noble.Idx
 	}
 	fmt.Printf("%+v\n", idxInfo)
+}
+
+// TakeTopCard 翻第一张牌
+func (s *NobleTilesStack) TakeTopCard() (*NobleTile, error) {
+
+	ret, err := s.TakeTopNCard(1)
+	if err != nil {
+		return nil, err
+	}
+	return ret[0], nil
+
+}
+
+// TakeTopNCard 翻顶上 n 张牌
+func (s *NobleTilesStack) TakeTopNCard(n int) (NobleTilesStack, error) {
+	if len(*s) < n {
+		return nil, errors.New(fmt.Sprintf("没有牌可以翻， 需要 %d 张，但是只有 %d 张。", n, len(*s)))
+	}
+
+	ret := (*s)[:n]
+	*s = (*s)[n+1:]
+	return ret, nil
 }

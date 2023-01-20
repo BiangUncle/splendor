@@ -87,7 +87,7 @@ func LoadDefaultNobleTiles() error {
 
 	for _, row := range rows {
 
-		noble := NobleTile{
+		noble := &NobleTile{
 			Idx:      ToInt(row[0]),
 			Prestige: ToInt(row[1]),
 			Acquires: TokenStack{

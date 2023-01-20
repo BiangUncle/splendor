@@ -1,6 +1,18 @@
 # splendor
 璀璨宝石服务端/客户端，练手项目
 
+## 开发进度
+
+1. 完成牌堆打乱【DONE】
+   1. 发展牌打乱
+   2. 贵族卡打乱
+2. 完成分发发展牌，分发
+   1. 发展牌每个级别分4张
+   2. 贵族卡抽人数+1分发
+
+
+## Content
+
 Components
 - 7 Emerald tokens (green)
 - 7 Diamond tokens (white)
