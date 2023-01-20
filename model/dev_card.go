@@ -1,6 +1,9 @@
 package model
 
-import "math/rand"
+import (
+	"fmt"
+	"math/rand"
+)
 
 const DevelopmentCardNumber = 90     // 总共的卡牌数量
 const DevelopmentCardLevelNumber = 3 // 发展卡等级数量
@@ -19,10 +22,11 @@ const (
 
 var defaultDevelopmentCardStacks *DevelopmentCardStacks
 
-type DevelopmentCardStack []DevelopmentCard
+type DevelopmentCardStack []*DevelopmentCard
 
 // DevelopmentCard 发展卡
 type DevelopmentCard struct {
+	Idx       int        // 唯一索引
 	Level     int        // 等级
 	BonusType int        // 奖励类别
 	Prestige  int        // 声望
@@ -41,6 +45,14 @@ func CreateANewDevelopmentCardStacks() *DevelopmentCardStacks {
 	return defaultDevelopmentCardStacks.Copy()
 }
 
+func CreateEmptyDevelopmentCardStacks() *DevelopmentCardStacks {
+	return &DevelopmentCardStacks{
+		TopStack:    make(DevelopmentCardStack, RevealedDevelopmentCardPerLevel),
+		MiddleStack: make(DevelopmentCardStack, RevealedDevelopmentCardPerLevel),
+		BottomStack: make(DevelopmentCardStack, RevealedDevelopmentCardPerLevel),
+	}
+}
+
 func (s DevelopmentCardStack) Copy() DevelopmentCardStack {
 	cpy := make(DevelopmentCardStack, len(s))
 	copy(cpy, s)
@@ -48,20 +60,42 @@ func (s DevelopmentCardStack) Copy() DevelopmentCardStack {
 }
 
 // Copy 复制
-func (d *DevelopmentCardStacks) Copy() *DevelopmentCardStacks {
+func (s *DevelopmentCardStacks) Copy() *DevelopmentCardStacks {
 
 	cpy := &DevelopmentCardStacks{
-		TopStack:    d.TopStack.Copy(),
-		MiddleStack: d.MiddleStack.Copy(),
-		BottomStack: d.BottomStack.Copy(),
+		TopStack:    s.TopStack.Copy(),
+		MiddleStack: s.MiddleStack.Copy(),
+		BottomStack: s.BottomStack.Copy(),
 	}
 
 	return cpy
 }
 
-func ShuffleDevelopmentCard(developmentCards []DevelopmentCard) []DevelopmentCard {
-	rand.Shuffle(len(developmentCards), func(i, j int) {
-		developmentCards[i], developmentCards[j] = developmentCards[j], developmentCards[i]
+// Shuffle 打乱牌堆
+func (s DevelopmentCardStack) Shuffle() {
+	rand.Shuffle(len(s), func(i, j int) {
+		s[i], s[j] = s[j], s[i]
 	})
-	return developmentCards
+}
+
+func (s DevelopmentCardStack) ShowIdxInfo() {
+	idxInfo := make([]int, len(s))
+	for i, card := range s {
+		idxInfo[i] = card.Idx
+	}
+	fmt.Printf("%+v\n", idxInfo)
+}
+
+// Shuffle 打乱牌堆
+func (s *DevelopmentCardStacks) Shuffle() {
+	s.TopStack.Shuffle()
+	s.MiddleStack.Shuffle()
+	s.BottomStack.Shuffle()
+}
+
+// ShowIdxInfo 打乱牌堆
+func (s *DevelopmentCardStacks) ShowIdxInfo() {
+	s.TopStack.ShowIdxInfo()
+	s.MiddleStack.ShowIdxInfo()
+	s.BottomStack.ShowIdxInfo()
 }

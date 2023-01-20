@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestTurnAction(t *testing.T) {
+func TestPlayerAddToken(t *testing.T) {
 	table := model.CreateANewTable()
 	t.Logf("%+v", table)
 
@@ -18,4 +18,14 @@ func TestTurnAction(t *testing.T) {
 	}
 	player1.ShowPlayerInfo()
 	t.Logf("%+v", table)
+}
+
+func TestShuffle(t *testing.T) {
+	table := model.CreateANewTable()
+	t.Logf("%+v", table)
+
+	table.DevelopmentCardStacks.ShowIdxInfo()
+	table.Shuffle()
+	table.DevelopmentCardStacks.ShowIdxInfo()
+
 }

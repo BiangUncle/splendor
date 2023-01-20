@@ -5,6 +5,7 @@ import "math/rand"
 const NobleTitleNumber = 10
 
 type NobleTile struct {
+	Idx      int        // 唯一索引
 	Prestige int        // 声望
 	Acquires TokenStack // 所需的宝石列表
 }

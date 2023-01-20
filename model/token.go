@@ -3,7 +3,6 @@ package model
 import (
 	"errors"
 	"fmt"
-	"math/rand"
 )
 
 const TokenTypeNumber = 6
@@ -113,11 +112,4 @@ func (s TokenStack) Copy() TokenStack {
 	cpy := make(TokenStack, len(s))
 	copy(cpy, s)
 	return cpy
-}
-
-func ShuffleToken(tokens []Token) []Token {
-	rand.Shuffle(len(tokens), func(i, j int) {
-		tokens[i], tokens[j] = tokens[j], tokens[i]
-	})
-	return tokens
 }

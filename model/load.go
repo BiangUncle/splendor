@@ -53,16 +53,17 @@ func LoadDefaultDevelopmentCard() error {
 
 	for _, row := range rows {
 
-		card := DevelopmentCard{
-			Level:     ToInt(row[0]),
-			BonusType: ToInt(row[1]),
-			Prestige:  ToInt(row[2]),
+		card := &DevelopmentCard{
+			Idx:       ToInt(row[0]),
+			Level:     ToInt(row[1]),
+			BonusType: ToInt(row[2]),
+			Prestige:  ToInt(row[3]),
 			Acquires: TokenStack{
-				ToInt(row[3]),
 				ToInt(row[4]),
 				ToInt(row[5]),
 				ToInt(row[6]),
 				ToInt(row[7]),
+				ToInt(row[8]),
 				0,
 			},
 		}
@@ -87,13 +88,14 @@ func LoadDefaultNobleTiles() error {
 	for _, row := range rows {
 
 		noble := NobleTile{
-			Prestige: ToInt(row[0]),
+			Idx:      ToInt(row[0]),
+			Prestige: ToInt(row[1]),
 			Acquires: TokenStack{
-				ToInt(row[1]),
 				ToInt(row[2]),
 				ToInt(row[3]),
 				ToInt(row[4]),
 				ToInt(row[5]),
+				ToInt(row[6]),
 				0,
 			},
 		}
