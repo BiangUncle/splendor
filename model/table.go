@@ -104,11 +104,16 @@ func (t *Table) IsExistRevealedDevelopmentCard(idx int) bool {
 }
 
 // ReplaceRevealedDevelopmentCard 补充场上的发展卡
+// todo: 可优化，有大量重复逻辑
 func (t *Table) ReplaceRevealedDevelopmentCard(cardLevel int) error {
 
 	switch cardLevel {
 	case DevelopmentCardLevelTop:
 		card, err := t.DevelopmentCardStacks.TopStack.TakeTopCard()
+		// 如果没卡就不补充
+		if err != nil && len(t.DevelopmentCardStacks.TopStack) == 0 {
+			return nil
+		}
 		if err != nil {
 			return err
 		}
@@ -119,6 +124,10 @@ func (t *Table) ReplaceRevealedDevelopmentCard(cardLevel int) error {
 		return nil
 	case DevelopmentCardLevelMiddle:
 		card, err := t.DevelopmentCardStacks.MiddleStack.TakeTopCard()
+		// 如果没卡就不补充
+		if err != nil && len(t.DevelopmentCardStacks.MiddleStack) == 0 {
+			return nil
+		}
 		if err != nil {
 			return err
 		}
@@ -129,6 +138,10 @@ func (t *Table) ReplaceRevealedDevelopmentCard(cardLevel int) error {
 		return nil
 	case DevelopmentCardLevelBottom:
 		card, err := t.DevelopmentCardStacks.BottomStack.TakeTopCard()
+		// 如果没卡就不补充
+		if err != nil && len(t.DevelopmentCardStacks.BottomStack) == 0 {
+			return nil
+		}
 		if err != nil {
 			return err
 		}

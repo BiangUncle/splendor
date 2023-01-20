@@ -100,6 +100,15 @@ func (s TokenStack) TakeDoubleTokens(tokenIdx int) (TokenStack, error) {
 	return ret, nil
 }
 
+// TakeAGoldJoker 拿走一个黄金
+func (s TokenStack) TakeAGoldJoker() bool {
+	if s[TokenIdxGoldJoker] < 1 {
+		return false
+	}
+	s[TokenIdxGoldJoker]--
+	return true
+}
+
 // Add 添加宝石
 func (s TokenStack) Add(tokens TokenStack) {
 	for idx, v := range tokens {

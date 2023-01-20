@@ -37,6 +37,7 @@ func (s NobleTilesStack) Shuffle() {
 	})
 }
 
+// ShowIdxInfo 展示信息
 func (s NobleTilesStack) ShowIdxInfo() string {
 	idxInfo := make([]int, len(s))
 	for i, noble := range s {

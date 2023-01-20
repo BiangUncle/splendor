@@ -5,10 +5,13 @@ import (
 	"fmt"
 )
 
+const HandCardUpperBound = 3
+
 type Player struct {
 	Tokens           TokenStack           // 宝石列表
 	Bonuses          TokenStack           // 奖励列表
 	DevelopmentCards DevelopmentCardStack // 发展卡列表
+	HandCards        DevelopmentCardStack // 手中的发展卡
 	NobleTitles      NobleTilesStack      // 贵族
 	Prestige         int                  // 声望
 }
@@ -19,6 +22,7 @@ func CreateANewPlayer() *Player {
 		Tokens:           CreateEmptyTokenStack(),
 		Bonuses:          CreateEmptyTokenStack(),
 		DevelopmentCards: make(DevelopmentCardStack, 0),
+		HandCards:        make(DevelopmentCardStack, 0),
 		NobleTitles:      make(NobleTilesStack, 0),
 		Prestige:         0,
 	}
@@ -104,11 +108,47 @@ func (p *Player) PayToken(tokens TokenStack) (TokenStack, error) {
 	return returnToken, nil
 }
 
+// AddHandCard 玩家获取手牌
+func (p *Player) AddHandCard(card *DevelopmentCard) error {
+	if len(p.HandCards) >= HandCardUpperBound {
+		return errors.New(fmt.Sprintf("不能再增加手牌了，目前已经有 %d 张。", len(p.HandCards)))
+	}
+	// 发展卡增加这个
+	p.HandCards = append(p.HandCards, card)
+	return nil
+}
+
+// RemoveHandCard 移除手牌
+func (p *Player) RemoveHandCard(cardIdx int) (*DevelopmentCard, error) {
+
+	selectedIdx := -1
+	var newHandCards []*DevelopmentCard
+
+	for idx, card := range p.HandCards {
+		if card.Idx == cardIdx {
+			selectedIdx = idx
+		} else {
+			newHandCards = append(newHandCards, card)
+		}
+	}
+
+	if selectedIdx == -1 {
+		return nil, errors.New(fmt.Sprintf("移除手牌失败，cardIdx = %d, 现有手牌 %+v", cardIdx, p.HandCards))
+	}
+
+	ret := p.HandCards[selectedIdx]
+	p.HandCards = newHandCards
+
+	return ret, nil
+}
+
+// ShowPlayerInfo 展示信息
 func (p *Player) ShowPlayerInfo() {
 	fmt.Printf("|========Player=========\n")
 	fmt.Printf("| Token: %+v\n", p.Tokens)
 	fmt.Printf("| Bonuses: %+v\n", p.Bonuses)
 	fmt.Printf("| Cards: %+v\n", p.DevelopmentCards.ShowIdxInfo())
+	fmt.Printf("| HandCards: %+v\n", p.HandCards.ShowIdxInfo())
 	fmt.Printf("| Noble: %+v\n", p.NobleTitles)
 	fmt.Printf("| Prestige: %+v\n", p.Prestige)
 	fmt.Printf("|=======================\n")

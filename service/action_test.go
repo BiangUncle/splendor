@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"splendor/model"
 	"testing"
 )
@@ -103,4 +104,96 @@ func TestPurchaseDevelopmentCardWithToken(t *testing.T) {
 	table.ShowInfo()
 
 	player1.ShowPlayerInfo()
+}
+
+func TestReserveDevelopmentCard(t *testing.T) {
+	table := model.CreateANewTable()
+	table.ShowInfo()
+
+	err := table.Reveal()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	table.ShowInfo()
+
+	player1 := model.CreateANewPlayer()
+	player1.Tokens.Add([]int{3, 3, 3, 3, 3, 0})
+	player1.ShowPlayerInfo()
+
+	err = ReserveDevelopmentCard(player1, table, 10001) // todo 可配置
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	table.ShowInfo()
+
+	player1.ShowPlayerInfo()
+}
+
+func TestReserveStackCard(t *testing.T) {
+	table := model.CreateANewTable()
+	table.ShowInfo()
+
+	err := table.Reveal()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	table.ShowInfo()
+
+	player1 := model.CreateANewPlayer()
+	player1.Tokens.Add([]int{3, 3, 3, 3, 3, 0})
+	player1.ShowPlayerInfo()
+
+	err = ReserveStackCard(player1, table) // todo 可配置
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	table.ShowInfo()
+
+	player1.ShowPlayerInfo()
+}
+
+func TestPurchaseHandCard(t *testing.T) {
+
+	fmt.Println("初始化游戏")
+
+	table := model.CreateANewTable()
+	table.ShowInfo()
+
+	fmt.Println("洗牌")
+
+	err := table.Reveal()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	table.ShowInfo()
+
+	fmt.Println("创建角色")
+
+	player1 := model.CreateANewPlayer()
+	player1.Tokens.Add([]int{3, 3, 3, 3, 3, 0})
+	player1.ShowPlayerInfo()
+
+	fmt.Println("保存一个牌堆")
+
+	err = ReserveStackCard(player1, table) // todo 可配置
+	if err != nil {
+		t.Fatal(err)
+	}
+	table.ShowInfo()
+	player1.ShowPlayerInfo()
+
+	fmt.Println("购买手牌")
+
+	err = PurchaseHandCard(player1, table, 10015) // todo 可配置
+	if err != nil {
+		t.Fatal(err)
+	}
+	table.ShowInfo()
+	player1.ShowPlayerInfo()
+
 }

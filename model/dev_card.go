@@ -61,18 +61,6 @@ func (s DevelopmentCardStack) Copy() DevelopmentCardStack {
 	return cpy
 }
 
-// Copy 复制
-func (s *DevelopmentCardStacks) Copy() *DevelopmentCardStacks {
-
-	cpy := &DevelopmentCardStacks{
-		TopStack:    s.TopStack.Copy(),
-		MiddleStack: s.MiddleStack.Copy(),
-		BottomStack: s.BottomStack.Copy(),
-	}
-
-	return cpy
-}
-
 // Shuffle 打乱牌堆
 func (s DevelopmentCardStack) Shuffle() {
 	rand.Shuffle(len(s), func(i, j int) {
@@ -151,18 +139,6 @@ func (s *DevelopmentCardStack) PutNewCardToEmptySite(newCard *DevelopmentCard) e
 	return nil
 }
 
-// Shuffle 打乱牌堆
-func (s *DevelopmentCardStacks) Shuffle() {
-	s.TopStack.Shuffle()
-	s.MiddleStack.Shuffle()
-	s.BottomStack.Shuffle()
-}
-
-// ShowIdxInfo 展示牌的索引
-func (s *DevelopmentCardStacks) ShowIdxInfo() string {
-	return s.TopStack.ShowIdxInfo() + s.MiddleStack.ShowIdxInfo() + s.BottomStack.ShowIdxInfo()
-}
-
 // TakeTopCard 翻第一张牌
 func (s *DevelopmentCardStack) TakeTopCard() (*DevelopmentCard, error) {
 
@@ -183,6 +159,30 @@ func (s *DevelopmentCardStack) TakeTopNCard(n int) (DevelopmentCardStack, error)
 	ret := (*s)[:n]
 	*s = (*s)[n:]
 	return ret, nil
+}
+
+// Copy 复制
+func (s *DevelopmentCardStacks) Copy() *DevelopmentCardStacks {
+
+	cpy := &DevelopmentCardStacks{
+		TopStack:    s.TopStack.Copy(),
+		MiddleStack: s.MiddleStack.Copy(),
+		BottomStack: s.BottomStack.Copy(),
+	}
+
+	return cpy
+}
+
+// Shuffle 打乱牌堆
+func (s *DevelopmentCardStacks) Shuffle() {
+	s.TopStack.Shuffle()
+	s.MiddleStack.Shuffle()
+	s.BottomStack.Shuffle()
+}
+
+// ShowIdxInfo 展示牌的索引
+func (s *DevelopmentCardStacks) ShowIdxInfo() string {
+	return s.TopStack.ShowIdxInfo() + s.MiddleStack.ShowIdxInfo() + s.BottomStack.ShowIdxInfo()
 }
 
 // IsExistCard 牌堆中是否有这张牌
