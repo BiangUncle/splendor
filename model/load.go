@@ -1,0 +1,101 @@
+package model
+
+import (
+	"encoding/csv"
+	"log"
+	"os"
+	"strconv"
+)
+
+func ReadCsv(filepath string) ([]string, [][]string) {
+	//打开文件(只读模式)，创建io.read接口实例
+	opencast, err := os.Open(filepath)
+	if err != nil {
+		log.Println("csv文件打开失败！")
+	}
+	defer opencast.Close()
+
+	//创建csv读取接口实例
+	ReadCsv := csv.NewReader(opencast)
+
+	//获取一行内容，一般为第一行内容
+	read, _ := ReadCsv.Read() //返回切片类型：[chen  hai wei]
+	log.Println(read)
+
+	//读取所有内容
+	ReadAll, err := ReadCsv.ReadAll() //返回切片类型：[[s s ds] [a a a]]
+	log.Println(ReadAll)
+
+	/*
+	  说明：
+	   1、读取csv文件返回的内容为切片类型，可以通过遍历的方式使用或Slicer[0]方式获取具体的值。
+	   2、同一个函数或线程内，两次调用Read()方法时，第二次调用时得到的值为每二行数据，依此类推。
+	   3、大文件时使用逐行读取，小文件直接读取所有然后遍历，两者应用场景不一样，需要注意。
+	*/
+
+	return read, ReadAll
+}
+
+func ToInt(s string) int {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		return -1
+	}
+	return i
+}
+
+func LoadDefaultDevelopmentCard() error {
+	_, rows := ReadCsv("../csv/dev_card.csv")
+	defaultDevelopmentCardStacks = &DevelopmentCardStacks{}
+
+	for _, row := range rows {
+
+		card := DevelopmentCard{
+			Level:     ToInt(row[0]),
+			BonusType: ToInt(row[1]),
+			Prestige:  ToInt(row[2]),
+			Acquires: TokenStack{
+				ToInt(row[3]),
+				ToInt(row[4]),
+				ToInt(row[5]),
+				ToInt(row[6]),
+				ToInt(row[7]),
+				0,
+			},
+		}
+
+		switch card.Level {
+		case DevelopmentCardLevelBottom:
+			defaultDevelopmentCardStacks.BottomStack = append(defaultDevelopmentCardStacks.BottomStack, card)
+		case DevelopmentCardLevelMiddle:
+			defaultDevelopmentCardStacks.MiddleStack = append(defaultDevelopmentCardStacks.MiddleStack, card)
+		case DevelopmentCardLevelTop:
+			defaultDevelopmentCardStacks.TopStack = append(defaultDevelopmentCardStacks.TopStack, card)
+		}
+	}
+
+	return nil
+}
+
+func LoadDefaultNobleTiles() error {
+	_, rows := ReadCsv("../csv/noble_tile.csv")
+
+	for _, row := range rows {
+
+		noble := NobleTile{
+			Prestige: ToInt(row[0]),
+			Acquires: TokenStack{
+				ToInt(row[1]),
+				ToInt(row[2]),
+				ToInt(row[3]),
+				ToInt(row[4]),
+				ToInt(row[5]),
+				0,
+			},
+		}
+
+		defaultNobleTilesStack = append(defaultNobleTilesStack, noble)
+	}
+
+	return nil
+}

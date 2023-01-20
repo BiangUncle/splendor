@@ -166,4 +166,5 @@ The player who then has the highest number of prestige points is declared the wi
 
 
 ## Reference
-https://www.ultraboardgames.com/splendor/game-rules.php
+- https://www.ultraboardgames.com/splendor/game-rules.php
+- https://www.wikihow.com/Play-Splendor
