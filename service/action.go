@@ -36,6 +36,20 @@ func PurchaseDevelopmentCard(p *model.Player, t *model.Table, cardIdx int) error
 		return errors.New(fmt.Sprintf("场上没这个牌，目标 %d，存在的牌 %+v", cardIdx, t.RevealedDevelopmentCards.ShowIdxInfo()))
 	}
 
+	// 判断是否有足够的宝石
+	if !p.HasEnoughToken(model.DevelopmentCardMap[cardIdx].Acquires) {
+		return errors.New(fmt.Sprintf("不够钱买啊，你需要 %+v，你只有 %+v%+v。", model.DevelopmentCardMap[cardIdx].Acquires, p.Tokens, p.Bonuses))
+	}
+
+	// 支付宝石
+	returnToken, err := p.PayToken(model.DevelopmentCardMap[cardIdx].Acquires)
+	if err != nil {
+		return err
+	}
+
+	// 把返还的宝石返回到场上
+	t.TokenStack.Add(returnToken)
+
 	// 移除场上的牌
 	card, cardLevel, ok := t.RevealedDevelopmentCards.TakeCard(10001)
 	if !ok {
@@ -43,7 +57,7 @@ func PurchaseDevelopmentCard(p *model.Player, t *model.Table, cardIdx int) error
 	}
 
 	// 补充场上的牌
-	err := t.ReplaceRevealedDevelopmentCard(cardLevel)
+	err = t.ReplaceRevealedDevelopmentCard(cardLevel)
 	if err != nil {
 		return err
 	}

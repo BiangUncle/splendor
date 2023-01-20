@@ -22,6 +22,7 @@ const (
 )
 
 var defaultDevelopmentCardStacks *DevelopmentCardStacks
+var DevelopmentCardMap = make(map[int]*DevelopmentCard, 0)
 
 type DevelopmentCardStack []*DevelopmentCard
 

@@ -141,3 +141,13 @@ func (t *Table) ReplaceRevealedDevelopmentCard(cardLevel int) error {
 
 	return errors.New(fmt.Sprintf("你这个发展卡等级好像有问题，等级 = %d", cardLevel))
 }
+
+// ShowInfo 展示信息
+func (t *Table) ShowInfo() {
+	fmt.Printf("|=========Table=========\n")
+	fmt.Printf("| Token: %+v\n", t.TokenStack)
+	fmt.Printf("| DevCard: %+v\n", t.DevelopmentCardStacks.ShowIdxInfo())
+	fmt.Printf("| RevealCards: %+v\n", t.RevealedDevelopmentCards.ShowIdxInfo())
+	fmt.Printf("| Noble: %+v\n", t.NobleTilesStack.ShowIdxInfo())
+	fmt.Printf("|=======================\n")
+}

@@ -108,6 +108,17 @@ func (s TokenStack) Add(tokens TokenStack) {
 	return
 }
 
+// Minus 减少宝石
+func (s TokenStack) Minus(tokens TokenStack) error {
+	for idx, v := range tokens {
+		if s[idx] < v {
+			return errors.New(fmt.Sprintf("无法扣除宝石，只有 %d 个，要扣 %d 个。", s[idx], v))
+		}
+		s[idx] -= v
+	}
+	return nil
+}
+
 func (s TokenStack) Copy() TokenStack {
 	cpy := make(TokenStack, len(s))
 	copy(cpy, s)

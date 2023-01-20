@@ -37,12 +37,13 @@ func (s NobleTilesStack) Shuffle() {
 	})
 }
 
-func (s NobleTilesStack) ShowIdxInfo() {
+func (s NobleTilesStack) ShowIdxInfo() string {
 	idxInfo := make([]int, len(s))
 	for i, noble := range s {
 		idxInfo[i] = noble.Idx
 	}
-	fmt.Printf("%+v\n", idxInfo)
+	//fmt.Printf("%+v\n", idxInfo)
+	return fmt.Sprintf("%+v", idxInfo)
 }
 
 // TakeTopCard 翻第一张牌

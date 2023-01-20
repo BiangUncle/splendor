@@ -1,6 +1,9 @@
 package model
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type Player struct {
 	Tokens           TokenStack           // 宝石列表
@@ -37,12 +40,76 @@ func (p *Player) AddDevelopmentCard(card *DevelopmentCard) {
 	return
 }
 
+// HasEnoughToken 判断是否足够宝石
+func (p *Player) HasEnoughToken(tokens TokenStack) bool {
+	// 使用的黄金数量
+	remainGoldJoker := p.Tokens[TokenIdxGoldJoker]
+
+	for idx, tokensNum := range p.Tokens {
+		// 不判断黄金
+		if idx == TokenIdxGoldJoker {
+			continue
+		}
+		// 判断现金加奖励够不够购买
+		if tokensNum+p.Bonuses[idx] >= tokens[idx] {
+			continue
+		}
+		// 判断加上黄金够不够，足够需要扣除黄金
+		if tokensNum+p.Bonuses[idx]+remainGoldJoker >= tokens[idx] {
+			remainGoldJoker -= tokens[idx] - (tokensNum + p.Bonuses[idx])
+			continue
+		}
+		return false
+	}
+
+	return true
+}
+
+// PayToken 支付宝石
+func (p *Player) PayToken(tokens TokenStack) (TokenStack, error) {
+	// 使用的黄金数量
+	remainGoldJoker := p.Tokens[TokenIdxGoldJoker]
+
+	returnToken := CreateEmptyTokenStack()
+
+	for idx, tokensNum := range p.Tokens {
+		// 不判断黄金
+		if idx == TokenIdxGoldJoker {
+			continue
+		}
+		// 判断现金加奖励够不够购买
+		if tokensNum+p.Bonuses[idx] >= tokens[idx] {
+			needPay := tokens[idx] - p.Bonuses[idx] // 计算需要买多少
+			returnToken[idx] += needPay
+			continue
+		}
+		// 判断加上黄金够不够，足够需要扣除黄金
+		if tokensNum+p.Bonuses[idx]+remainGoldJoker >= tokens[idx] {
+			remainGoldJoker -= tokens[idx] - (tokensNum + p.Bonuses[idx])
+			returnToken[idx] += tokensNum
+			continue
+		}
+		return nil, errors.New(fmt.Sprintf("支付错误，根本不够啊，需要 %d, 只有 %d, 剩余黄金 %d。", tokens[idx], tokensNum+p.Bonuses[idx], remainGoldJoker))
+	}
+
+	// 计算需要返还的黄金
+	returnToken[TokenIdxGoldJoker] = p.Tokens[TokenIdxGoldJoker] - remainGoldJoker
+
+	// 角色扣除宝石
+	err := p.Tokens.Minus(returnToken)
+	if err != nil {
+		return nil, err
+	}
+
+	return returnToken, nil
+}
+
 func (p *Player) ShowPlayerInfo() {
-	fmt.Printf("|=======================\n")
-	fmt.Printf("| %+v\n", p.Tokens)
-	fmt.Printf("| %+v\n", p.Bonuses)
-	fmt.Printf("| %+v\n", p.DevelopmentCards.ShowIdxInfo())
-	fmt.Printf("| %+v\n", p.NobleTitles)
-	fmt.Printf("| %+v\n", p.Prestige)
+	fmt.Printf("|========Player=========\n")
+	fmt.Printf("| Token: %+v\n", p.Tokens)
+	fmt.Printf("| Bonuses: %+v\n", p.Bonuses)
+	fmt.Printf("| Cards: %+v\n", p.DevelopmentCards.ShowIdxInfo())
+	fmt.Printf("| Noble: %+v\n", p.NobleTitles)
+	fmt.Printf("| Prestige: %+v\n", p.Prestige)
 	fmt.Printf("|=======================\n")
 }

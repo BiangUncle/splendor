@@ -69,13 +69,38 @@ func TestPurchaseDevelopmentCard(t *testing.T) {
 	player1 := model.CreateANewPlayer()
 	player1.ShowPlayerInfo()
 
-	err = PurchaseDevelopmentCard(player1, table, 10001)
+	err = PurchaseDevelopmentCard(player1, table, 10001) // todo 可配置
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Logf("%+v\n", table.RevealedDevelopmentCards.ShowIdxInfo())
 	t.Logf("%+v\n", table.DevelopmentCardStacks.ShowIdxInfo())
+
+	player1.ShowPlayerInfo()
+}
+
+func TestPurchaseDevelopmentCardWithToken(t *testing.T) {
+	table := model.CreateANewTable()
+	table.ShowInfo()
+
+	err := table.Reveal()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	table.ShowInfo()
+
+	player1 := model.CreateANewPlayer()
+	player1.Tokens.Add([]int{3, 3, 3, 3, 3, 0})
+	player1.ShowPlayerInfo()
+
+	err = PurchaseDevelopmentCard(player1, table, 10001) // todo 可配置
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	table.ShowInfo()
 
 	player1.ShowPlayerInfo()
 }

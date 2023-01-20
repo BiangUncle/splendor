@@ -68,6 +68,8 @@ func LoadDefaultDevelopmentCard() error {
 			},
 		}
 
+		DevelopmentCardMap[card.Idx] = card
+
 		switch card.Level {
 		case DevelopmentCardLevelBottom:
 			defaultDevelopmentCardStacks.BottomStack = append(defaultDevelopmentCardStacks.BottomStack, card)
