@@ -8,6 +8,7 @@ import (
 const HandCardUpperBound = 3
 
 type Player struct {
+	Name             string               // 玩家名字
 	Tokens           TokenStack           // 宝石列表
 	Bonuses          TokenStack           // 奖励列表
 	DevelopmentCards DevelopmentCardStack // 发展卡列表
@@ -170,12 +171,36 @@ func (p *Player) ReceiveNoble(noble *NobleTile) (bool, error) {
 
 // ShowPlayerInfo 展示信息
 func (p *Player) ShowPlayerInfo() {
-	fmt.Printf("|========Player=========\n")
-	fmt.Printf("| Token: %+v\n", p.Tokens)
-	fmt.Printf("| Bonuses: %+v\n", p.Bonuses)
-	fmt.Printf("| Cards: %+v\n", p.DevelopmentCards.ShowIdxInfo())
+	fmt.Printf("|==========Player==========\n")
+	fmt.Printf("| Token:     %+v\n", p.Tokens)
+	fmt.Printf("| Bonuses:   %+v\n", p.Bonuses)
+	fmt.Printf("| Cards:     %+v\n", p.DevelopmentCards.ShowIdxInfo())
 	fmt.Printf("| HandCards: %+v\n", p.HandCards.ShowIdxInfo())
-	fmt.Printf("| Noble: %+v\n", p.NobleTitles.ShowIdxInfo())
-	fmt.Printf("| Prestige: %+v\n", p.Prestige)
-	fmt.Printf("|=======================\n")
+	fmt.Printf("| Noble:     %+v\n", p.NobleTitles.ShowIdxInfo())
+	fmt.Printf("| Prestige:  %+v\n", p.Prestige)
+	fmt.Printf("|==========================\n")
+}
+
+// ShowPlayerInfoV2 展示信息
+func (p *Player) ShowPlayerInfoV2() {
+
+	infos := p.PlayerInfoString()
+
+	fmt.Printf("|%s%-10s%s\n", "==========", " Player", "==========")
+	for _, info := range infos {
+		fmt.Printf("| %-30s\n", info)
+	}
+	fmt.Printf("|==============================\n")
+}
+
+// PlayerInfoString 玩家的信息
+func (p *Player) PlayerInfoString() []string {
+	return []string{
+		fmt.Sprintf("%-10s %+v", "Token:", p.Tokens),
+		fmt.Sprintf("%-10s %+v", "Bonuses:", p.Bonuses),
+		fmt.Sprintf("%-10s %+v", "Cards:", p.DevelopmentCards.ShowIdxInfo()),
+		fmt.Sprintf("%-10s %+v", "HandCards:", p.HandCards.ShowIdxInfo()),
+		fmt.Sprintf("%-10s %+v", "Noble:", p.NobleTitles.ShowIdxInfo()),
+		fmt.Sprintf("%-10s %+v", "Prestige:", p.Prestige),
+	}
 }

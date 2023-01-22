@@ -39,10 +39,12 @@ func CreateANewTable() *Table {
 	return table
 }
 
+// AddPlayer 添加玩家
 func (t *Table) AddPlayer(p *Player) {
 	t.Players = append(t.Players, p)
 }
 
+// Shuffle 发牌
 func (t *Table) Shuffle() {
 	t.DevelopmentCardStacks.Shuffle()
 	t.NobleTilesStack.Shuffle()
@@ -155,6 +157,17 @@ func (t *Table) ReplaceRevealedDevelopmentCard(cardLevel int) error {
 	return errors.New(fmt.Sprintf("你这个发展卡等级好像有问题，等级 = %d", cardLevel))
 }
 
+// TableInfoString 玩家的信息
+func (t *Table) TableInfoString() []string {
+	return []string{
+		fmt.Sprintf("%-15s %+v", "Token:", t.TokenStack),
+		fmt.Sprintf("%-15s %+v", "DevCard:", t.DevelopmentCardStacks.ShowIdxInfo()),
+		fmt.Sprintf("%-15s %+v", "RevealCards:", t.RevealedDevelopmentCards.ShowIdxInfo()),
+		fmt.Sprintf("%-15s %+v", "Noble:", t.NobleTilesStack.ShowIdxInfo()),
+		fmt.Sprintf("%-15s %+v", "RevealNoble:", t.RevealedNobleTiles.ShowIdxInfo()),
+	}
+}
+
 // ShowInfo 展示信息
 func (t *Table) ShowInfo() {
 	fmt.Printf("|=========Table=========\n")
@@ -164,4 +177,37 @@ func (t *Table) ShowInfo() {
 	fmt.Printf("| Noble: %+v\n", t.NobleTilesStack.ShowIdxInfo())
 	fmt.Printf("| RevealNoble: %+v\n", t.RevealedNobleTiles.ShowIdxInfo())
 	fmt.Printf("|=======================\n")
+}
+
+// ShowTableInfo 展示整场游戏信息
+func (t *Table) ShowTableInfo() {
+
+	infos := make([][]string, 0)
+
+	for _, player := range t.Players {
+		infos = append(infos, player.PlayerInfoString())
+	}
+
+	line := ""
+	for j := 0; j < len(infos); j++ {
+		line = line + fmt.Sprintf("%s", "================================")
+	}
+
+	fmt.Printf("%s\n", line)
+
+	for i := 0; i < len(infos[0]); i++ {
+		ret := ""
+		for j := 0; j < len(infos); j++ {
+			ret = ret + fmt.Sprintf("| %-30s", infos[j][i])
+		}
+		ret = ret + "\n"
+		fmt.Print(ret)
+	}
+
+	fmt.Printf("%s\n", line)
+
+	for _, info := range t.TableInfoString() {
+		fmt.Printf("| %s\n", info)
+	}
+	fmt.Printf("%s\n", line)
 }

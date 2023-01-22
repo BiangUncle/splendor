@@ -86,10 +86,9 @@ func (s DevelopmentCardStack) ShowIdxInfo() string {
 		if card == nil {
 			idxInfo[i] = -1
 		} else {
-			idxInfo[i] = card.Idx
+			idxInfo[i] = card.Idx % 100
 		}
 	}
-	//fmt.Printf("%+v\n", idxInfo)
 	return fmt.Sprintf("%+v", idxInfo)
 }
 

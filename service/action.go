@@ -16,7 +16,7 @@ func TurnRound(table *model.Table) error {
 	for !gameOver {
 		for _, player := range players {
 			// 执行动作
-			err := TurnAction(player, table, 0)
+			err := Action(player, table, 0)
 			if err != nil {
 				return err
 			}
@@ -36,24 +36,35 @@ func TurnRound(table *model.Table) error {
 	return nil
 }
 
-// TurnAction 玩家进行动作
-func TurnAction(p *model.Player, t *model.Table, action int) error {
+// Action 玩家进行动作
+func Action(p *model.Player, t *model.Table, action int) error {
 	switch action {
 	case 1: // 抽三个宝石
-		tokenStack, err := t.TokenStack.TakeThreeTokens([]int{1, 1, 1, 0, 0, 0}) // todo: 用户选择
+		tokenStack, err := t.TokenStack.TakeThreeTokens([]int{1, 1, 1, 1, 1, 0}) // todo: 用户选择
 		if err != nil {
 			return err
 		}
 		p.AddTokens(tokenStack)
+		break
 	case 2: // 抽两个一样的宝石
 		tokenStack, err := t.TokenStack.TakeDoubleTokens(model.TokenIdxEmerald) // todo: 用户选择
 		if err != nil {
 			return err
 		}
 		p.AddTokens(tokenStack)
-	case 3:
-	// 购买一张发展牌
+		break
+	case 3: // 购买一张发展牌
+		err := PurchaseDevelopmentCard(p, t, 10001)
+		if err != nil {
+			return err
+		}
+		break
 	case 4: // 预购/摸取一张发展牌
+		err := ReserveDevelopmentCard(p, t, 10001)
+		if err != nil {
+			return err
+		}
+		break
 	}
 	return nil
 }

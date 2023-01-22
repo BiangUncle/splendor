@@ -7,6 +7,8 @@ import (
 	"strconv"
 )
 
+var CsvFilePath = "../csv/"
+
 // ReadCsv 读取 csv 文件
 func ReadCsv(filepath string) ([]string, [][]string) {
 	//打开文件(只读模式)，创建io.read接口实例
@@ -21,11 +23,11 @@ func ReadCsv(filepath string) ([]string, [][]string) {
 
 	//获取一行内容，一般为第一行内容
 	read, _ := ReadCsv.Read() //返回切片类型：[chen  hai wei]
-	log.Println(read)
+	//log.Println(read)
 
 	//读取所有内容
 	ReadAll, _ := ReadCsv.ReadAll() //返回切片类型：[[s s ds] [a a a]]
-	log.Println(ReadAll)
+	//log.Println(ReadAll)
 
 	/*
 	  说明：
@@ -48,7 +50,7 @@ func ToInt(s string) int {
 
 // LoadDefaultDevelopmentCard 加载默认发展卡
 func LoadDefaultDevelopmentCard() error {
-	_, rows := ReadCsv("../csv/dev_card.csv")
+	_, rows := ReadCsv(CsvFilePath + "dev_card.csv")
 	defaultDevelopmentCardStacks = &DevelopmentCardStacks{}
 
 	for _, row := range rows {
@@ -85,7 +87,7 @@ func LoadDefaultDevelopmentCard() error {
 
 // LoadDefaultNobleTiles 加载默认贵族卡
 func LoadDefaultNobleTiles() error {
-	_, rows := ReadCsv("../csv/noble_tile.csv")
+	_, rows := ReadCsv(CsvFilePath + "noble_tile.csv")
 
 	for _, row := range rows {
 

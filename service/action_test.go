@@ -13,7 +13,7 @@ func TestPlayerAddToken(t *testing.T) {
 	player1 := model.CreateANewPlayer()
 	player1.ShowPlayerInfo()
 
-	err := TurnAction(player1, table, 1)
+	err := Action(player1, table, 1)
 	if err != nil {
 		t.Error(err)
 	}

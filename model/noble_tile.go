@@ -44,7 +44,7 @@ func (s NobleTilesStack) ShowIdxInfo() string {
 		if noble == nil {
 			idxInfo[i] = -1
 		} else {
-			idxInfo[i] = noble.Idx
+			idxInfo[i] = noble.Idx % 100
 		}
 	}
 	//fmt.Printf("%+v\n", idxInfo)
