@@ -15,7 +15,7 @@ func NewGame() {
 	if err != nil {
 		panic(err)
 	}
-	err = service.TurnRoundCMD(table)
+	err = service.TurnRound(table)
 	if err != nil {
 		panic(err)
 	}

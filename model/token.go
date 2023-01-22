@@ -72,8 +72,8 @@ func (s TokenStack) takeToken(tokenId int, num int) (TokenStack, error) {
 // TakeThreeTokens 拿取三个不同宝石
 func (s TokenStack) TakeThreeTokens(tokens []int) (TokenStack, error) {
 
-	if len(tokens) != 3 {
-		return nil, errors.New(fmt.Sprintf("目前不支持拿其他数量的宝石，只能拿3，你拿了 %d", len(tokens)))
+	if len(tokens) > 3 {
+		return nil, errors.New(fmt.Sprintf("目前不支持拿大于3数量的宝石，只能拿3，你拿了 %d", len(tokens)))
 	}
 
 	// 判断是否拿得到
@@ -103,16 +103,30 @@ func (s TokenStack) TakeDoubleTokens(tokenIdx int) (TokenStack, error) {
 func (s TokenStack) TakeTokens(selected TokenStack) (TokenStack, error) {
 	// 判断是否拿得到
 	ret := make(TokenStack, TokenTypeNumber)
+	var err error
+	var rollback []func()
+
+	defer func() {
+		if err != nil {
+			for _, rb := range rollback {
+				rb()
+			}
+		}
+	}()
 
 	for idx, need := range selected {
 		if need == 0 {
 			continue
 		}
 		if s[idx] < need {
-			return nil, errors.New(fmt.Sprintf("不够拿宝石，需要 %d 个，只有 %d 个。", need, s[idx]))
+			err = errors.New(fmt.Sprintf("不够拿宝石，需要 %d 个，只有 %d 个。", need, s[idx]))
+			return nil, err
 		}
 		ret[idx] += need
+		// 执行操作
 		s[idx] -= need
+		// 回滚操作
+		rollback = append(rollback, func() { s[idx] += need })
 	}
 
 	return ret, nil
@@ -137,11 +151,26 @@ func (s TokenStack) Add(tokens TokenStack) {
 
 // Minus 减少宝石
 func (s TokenStack) Minus(tokens TokenStack) error {
+
+	var err error
+	var rollback []func()
+
+	defer func() {
+		if err != nil {
+			for _, rb := range rollback {
+				rb()
+			}
+		}
+	}()
+
 	for idx, v := range tokens {
 		if s[idx] < v {
 			return errors.New(fmt.Sprintf("无法扣除宝石，只有 %d 个，要扣 %d 个。", s[idx], v))
 		}
 		s[idx] -= v
+		rollback = append(rollback, func() {
+			s[idx] += v
+		})
 	}
 	return nil
 }

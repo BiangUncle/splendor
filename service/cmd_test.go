@@ -9,7 +9,7 @@ func TestTurnRoundCMD(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = TurnRoundCMD(table)
+	err = TurnRound(table)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -25,8 +25,8 @@ func CreateANewGame(playerNum int) (*model.Table, error) {
 	return table, nil
 }
 
-// TurnRoundCMD 玩家轮训
-func TurnRoundCMD(table *model.Table) error {
+// TurnRound 玩家轮训
+func TurnRound(table *model.Table) error {
 	players := table.Players
 
 	round := 0
@@ -38,13 +38,13 @@ func TurnRoundCMD(table *model.Table) error {
 			err := ActionCMD(player, table)
 			if err != nil {
 				fmt.Println(err)
-				return err
+				continue
 			}
 			// 招待贵族
 			err = ReceiveNoble(player, table)
 			if err != nil {
 				fmt.Println(err)
-				return err
+				continue
 			}
 			// 判断分数
 			if player.Prestige >= 15 {
@@ -74,12 +74,14 @@ func ActionCMD(p *model.Player, t *model.Table) (err error) {
 func Action(p *model.Player, t *model.Table, action int) error {
 	switch action {
 	case 1: // 抽三个宝石
+		fmt.Print("请抽取三个不同的宝石: ")
 		tokenIdx, err := utils.InputList()
 		if err != nil {
 			return err
 		}
 		return ActionTakeThreeTokens(p, t, tokenIdx)
 	case 2: // 抽两个一样的宝石
+		fmt.Print("请抽取两个相同的宝石: ")
 		tokenId, err := utils.InputInt()
 		if err != nil {
 			return err
