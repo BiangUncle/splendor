@@ -44,6 +44,15 @@ func (p *Player) AddDevelopmentCard(card *DevelopmentCard) {
 	return
 }
 
+// AddNobleTile 玩家招待贵族
+func (p *Player) AddNobleTile(noble *NobleTile) {
+	// 发展卡增加这个
+	p.NobleTitles = append(p.NobleTitles, noble)
+	p.Prestige += noble.Prestige
+
+	return
+}
+
 // HasEnoughToken 判断是否足够宝石
 func (p *Player) HasEnoughToken(tokens TokenStack) bool {
 	// 使用的黄金数量
@@ -142,6 +151,23 @@ func (p *Player) RemoveHandCard(cardIdx int) (*DevelopmentCard, error) {
 	return ret, nil
 }
 
+// ReceiveNoble 招待贵族，如果不可以招待，返回 false
+func (p *Player) ReceiveNoble(noble *NobleTile) (bool, error) {
+
+	// 计算当前发展卡是否足够招待
+	//existTokens := p.DevelopmentCards.ToTokenStack()
+	existTokens := p.Bonuses // bonuses 和发展卡一个数量
+	more := existTokens.MoreThan(noble.Acquires)
+	if !more {
+		return false, nil
+	}
+
+	// 将当前贵族加入自己名下
+	p.AddNobleTile(noble)
+
+	return true, nil
+}
+
 // ShowPlayerInfo 展示信息
 func (p *Player) ShowPlayerInfo() {
 	fmt.Printf("|========Player=========\n")
@@ -149,7 +175,7 @@ func (p *Player) ShowPlayerInfo() {
 	fmt.Printf("| Bonuses: %+v\n", p.Bonuses)
 	fmt.Printf("| Cards: %+v\n", p.DevelopmentCards.ShowIdxInfo())
 	fmt.Printf("| HandCards: %+v\n", p.HandCards.ShowIdxInfo())
-	fmt.Printf("| Noble: %+v\n", p.NobleTitles)
+	fmt.Printf("| Noble: %+v\n", p.NobleTitles.ShowIdxInfo())
 	fmt.Printf("| Prestige: %+v\n", p.Prestige)
 	fmt.Printf("|=======================\n")
 }

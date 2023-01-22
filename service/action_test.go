@@ -197,3 +197,28 @@ func TestPurchaseHandCard(t *testing.T) {
 	player1.ShowPlayerInfo()
 
 }
+
+func TestReceiveNoble(t *testing.T) {
+	table := model.CreateANewTable()
+	table.ShowInfo()
+
+	player1 := model.CreateANewPlayer()
+	player1.Bonuses.Add([]int{3, 3, 3, 3, 3, 0})
+	player1.ShowPlayerInfo()
+
+	err := table.Reveal()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	table.ShowInfo()
+
+	err = ReceiveNoble(player1, table) // todo 可配置
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	table.ShowInfo()
+
+	player1.ShowPlayerInfo()
+}

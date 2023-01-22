@@ -41,7 +41,11 @@ func (s NobleTilesStack) Shuffle() {
 func (s NobleTilesStack) ShowIdxInfo() string {
 	idxInfo := make([]int, len(s))
 	for i, noble := range s {
-		idxInfo[i] = noble.Idx
+		if noble == nil {
+			idxInfo[i] = -1
+		} else {
+			idxInfo[i] = noble.Idx
+		}
 	}
 	//fmt.Printf("%+v\n", idxInfo)
 	return fmt.Sprintf("%+v", idxInfo)

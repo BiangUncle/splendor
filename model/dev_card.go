@@ -55,6 +55,17 @@ func CreateEmptyDevelopmentCardStacks() *DevelopmentCardStacks {
 	}
 }
 
+// ToTokenStack 发展卡列表转成token列表
+func (s DevelopmentCardStack) ToTokenStack() TokenStack {
+	tokens := make(TokenStack, TokenTypeNumber)
+
+	for _, card := range s {
+		tokens[card.BonusType]++
+	}
+
+	return tokens
+}
+
 func (s DevelopmentCardStack) Copy() DevelopmentCardStack {
 	cpy := make(DevelopmentCardStack, len(s))
 	copy(cpy, s)

@@ -17,7 +17,7 @@ type Table struct {
 	RevealedDevelopmentCards *DevelopmentCardStacks // 暴露的发展卡
 
 	NobleTilesStack    NobleTilesStack // 贵族卡堆
-	RevealedNobleTiles []*NobleTile    // 暴露的贵族卡
+	RevealedNobleTiles NobleTilesStack // 暴露的贵族卡
 
 	TokenStack TokenStack // 宝石卡堆
 
@@ -162,5 +162,6 @@ func (t *Table) ShowInfo() {
 	fmt.Printf("| DevCard: %+v\n", t.DevelopmentCardStacks.ShowIdxInfo())
 	fmt.Printf("| RevealCards: %+v\n", t.RevealedDevelopmentCards.ShowIdxInfo())
 	fmt.Printf("| Noble: %+v\n", t.NobleTilesStack.ShowIdxInfo())
+	fmt.Printf("| RevealNoble: %+v\n", t.RevealedNobleTiles.ShowIdxInfo())
 	fmt.Printf("|=======================\n")
 }

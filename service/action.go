@@ -6,6 +6,36 @@ import (
 	"splendor/model"
 )
 
+// TurnRound 玩家轮训
+func TurnRound(table *model.Table) error {
+	players := table.Players
+
+	round := 0
+	gameOver := false
+
+	for !gameOver {
+		for _, player := range players {
+			// 执行动作
+			err := TurnAction(player, table, 0)
+			if err != nil {
+				return err
+			}
+			// 招待贵族
+			err = ReceiveNoble(player, table)
+			if err != nil {
+				return err
+			}
+			// 判断分数
+			if player.Prestige >= 15 {
+				gameOver = true
+			}
+		}
+		round++
+	}
+
+	return nil
+}
+
 // TurnAction 玩家进行动作
 func TurnAction(p *model.Player, t *model.Table, action int) error {
 	switch action {
@@ -168,6 +198,33 @@ func PurchaseHandCard(p *model.Player, t *model.Table, cardIdx int) error {
 
 	// 转换为自己的发展卡
 	p.AddDevelopmentCard(card)
+
+	return nil
+}
+
+// ReceiveNoble 招待贵族
+func ReceiveNoble(p *model.Player, t *model.Table) error {
+
+	for idx, noble := range t.RevealedNobleTiles {
+		// 没有贵族了
+		if noble == nil {
+			continue
+		}
+
+		// 判断是否可以招待贵族
+		ok, err := p.ReceiveNoble(noble)
+		if err != nil {
+			return err
+		}
+		// 无法招待，继续判断
+		if !ok {
+			continue
+		}
+
+		// 移除贵族
+		t.RevealedNobleTiles[idx] = nil
+		break
+	}
 
 	return nil
 }

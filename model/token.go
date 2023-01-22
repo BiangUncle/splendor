@@ -128,6 +128,17 @@ func (s TokenStack) Minus(tokens TokenStack) error {
 	return nil
 }
 
+// MoreThan 判断是否所有宝石都多过
+func (s TokenStack) MoreThan(tokens TokenStack) bool {
+	for idx, v := range s {
+		if v < tokens[idx] {
+			return false
+		}
+	}
+	return true
+}
+
+// Copy 复制宝石列表
 func (s TokenStack) Copy() TokenStack {
 	cpy := make(TokenStack, len(s))
 	copy(cpy, s)
