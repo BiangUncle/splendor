@@ -10,7 +10,7 @@ func init() {
 	model.Init()
 }
 
-func main() {
+func NewGame() {
 	table, err := service.CreateANewGame(2)
 	if err != nil {
 		panic(err)
@@ -19,4 +19,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func main() {
+	NewGame()
 }

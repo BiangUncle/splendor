@@ -70,32 +70,50 @@ func (s TokenStack) takeToken(tokenId int, num int) (TokenStack, error) {
 }
 
 // TakeThreeTokens 拿取三个不同宝石
-func (s TokenStack) TakeThreeTokens(tokens TokenStack) (TokenStack, error) {
-	// 判断是否拿得到
-	ret := make(TokenStack, TokenTypeNumber)
+func (s TokenStack) TakeThreeTokens(tokens []int) (TokenStack, error) {
 
-	for idx, v := range tokens {
-		if s[idx] < v {
-			return nil, errors.New(fmt.Sprintf("不够拿宝石，需要 %d 个，只有 %d 个。", v, s[idx]))
-		}
-		ret[idx] += v
-		s[idx] -= v
+	if len(tokens) != 3 {
+		return nil, errors.New(fmt.Sprintf("目前不支持拿其他数量的宝石，只能拿3，你拿了 %d", len(tokens)))
 	}
 
-	return ret, nil
+	// 判断是否拿得到
+	selected := make(TokenStack, TokenTypeNumber)
+
+	for _, typ := range tokens {
+		if typ == -1 {
+			continue
+		}
+		selected[typ]++
+	}
+
+	return s.TakeTokens(selected)
 }
 
 // TakeDoubleTokens 拿取两个不同宝石
 func (s TokenStack) TakeDoubleTokens(tokenIdx int) (TokenStack, error) {
 	// 判断是否拿得到
+	selected := make(TokenStack, TokenTypeNumber)
+
+	selected[tokenIdx] = 2
+
+	return s.TakeTokens(selected)
+}
+
+// TakeTokens 拿去一定数量的宝石，对于3/2个宝石的拿取函数的一个抽象
+func (s TokenStack) TakeTokens(selected TokenStack) (TokenStack, error) {
+	// 判断是否拿得到
 	ret := make(TokenStack, TokenTypeNumber)
 
-	if s[tokenIdx] < 4 {
-		return nil, errors.New(fmt.Sprintf("宝石不够 4 个，没办法一次拿两个，目前只剩 %d 个。", s[tokenIdx]))
+	for idx, need := range selected {
+		if need == 0 {
+			continue
+		}
+		if s[idx] < need {
+			return nil, errors.New(fmt.Sprintf("不够拿宝石，需要 %d 个，只有 %d 个。", need, s[idx]))
+		}
+		ret[idx] += need
+		s[idx] -= need
 	}
-
-	ret[tokenIdx] += 2
-	s[tokenIdx] -= 2
 
 	return ret, nil
 }

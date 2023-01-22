@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"splendor/model"
+	"splendor/utils"
 )
 
 // CreateANewGame 创建一局新的游戏
@@ -67,4 +68,43 @@ func ActionCMD(p *model.Player, t *model.Table) (err error) {
 	}
 	err = Action(p, t, action)
 	return
+}
+
+// Action 玩家进行动作
+func Action(p *model.Player, t *model.Table, action int) error {
+	switch action {
+	case 1: // 抽三个宝石
+		tokenIdx, err := utils.InputList()
+		if err != nil {
+			return err
+		}
+		return ActionTakeThreeTokens(p, t, tokenIdx)
+	case 2: // 抽两个一样的宝石
+		tokenId, err := utils.InputInt()
+		if err != nil {
+			return err
+		}
+		return ActionTakeDoubleTokens(p, t, tokenId)
+	case 3: // 购买一张发展牌
+		cardIdx, err := utils.InputInt()
+		if err != nil {
+			return err
+		}
+		err = PurchaseDevelopmentCard(p, t, cardIdx)
+		if err != nil {
+			return err
+		}
+		break
+	case 4: // 预购/摸取一张发展牌
+		cardIdx, err := utils.InputInt()
+		if err != nil {
+			return err
+		}
+		err = ReserveDevelopmentCard(p, t, cardIdx)
+		if err != nil {
+			return err
+		}
+		break
+	}
+	return nil
 }

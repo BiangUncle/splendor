@@ -157,6 +157,15 @@ func (t *Table) ReplaceRevealedDevelopmentCard(cardLevel int) error {
 	return errors.New(fmt.Sprintf("你这个发展卡等级好像有问题，等级 = %d", cardLevel))
 }
 
+// RemoveRevealedNoble 移除贵族
+func (t *Table) RemoveRevealedNoble(idx int) error {
+	if len(t.RevealedNobleTiles) <= idx {
+		return errors.New(fmt.Sprintf("好像没有这么多贵族， 目前长度 %d, 你要移除第 %d 个", len(t.RevealedNobleTiles), idx))
+	}
+	t.RevealedNobleTiles[idx] = nil
+	return nil
+}
+
 // TableInfoString 玩家的信息
 func (t *Table) TableInfoString() []string {
 	return []string{

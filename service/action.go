@@ -6,66 +6,23 @@ import (
 	"splendor/model"
 )
 
-// TurnRound 玩家轮训
-func TurnRound(table *model.Table) error {
-	players := table.Players
-
-	round := 0
-	gameOver := false
-
-	for !gameOver {
-		for _, player := range players {
-			// 执行动作
-			err := Action(player, table, 0)
-			if err != nil {
-				return err
-			}
-			// 招待贵族
-			err = ReceiveNoble(player, table)
-			if err != nil {
-				return err
-			}
-			// 判断分数
-			if player.Prestige >= 15 {
-				gameOver = true
-			}
-		}
-		round++
+// ActionTakeThreeTokens 执行拿3个不同宝石
+func ActionTakeThreeTokens(p *model.Player, t *model.Table, tokenIdx []int) error {
+	tokenStack, err := t.TokenStack.TakeThreeTokens(tokenIdx)
+	if err != nil {
+		return err
 	}
-
+	p.AddTokens(tokenStack)
 	return nil
 }
 
-// Action 玩家进行动作
-func Action(p *model.Player, t *model.Table, action int) error {
-	switch action {
-	case 1: // 抽三个宝石
-		tokenStack, err := t.TokenStack.TakeThreeTokens([]int{1, 1, 1, 1, 1, 0}) // todo: 用户选择
-		if err != nil {
-			return err
-		}
-		p.AddTokens(tokenStack)
-		break
-	case 2: // 抽两个一样的宝石
-		tokenStack, err := t.TokenStack.TakeDoubleTokens(model.TokenIdxEmerald) // todo: 用户选择
-		if err != nil {
-			return err
-		}
-		p.AddTokens(tokenStack)
-		break
-	case 3: // 购买一张发展牌
-		err := PurchaseDevelopmentCard(p, t, 10001)
-		if err != nil {
-			return err
-		}
-		break
-	case 4: // 预购/摸取一张发展牌
-		err := ReserveDevelopmentCard(p, t, 10001)
-		if err != nil {
-			return err
-		}
-		break
+// ActionTakeDoubleTokens 执行拿2个相同宝石
+func ActionTakeDoubleTokens(p *model.Player, t *model.Table, tokenIdx int) error {
+	tokenStack, err := t.TokenStack.TakeDoubleTokens(tokenIdx)
+	if err != nil {
+		return err
 	}
+	p.AddTokens(tokenStack)
 	return nil
 }
 
@@ -92,7 +49,7 @@ func PurchaseDevelopmentCard(p *model.Player, t *model.Table, cardIdx int) error
 	t.TokenStack.Add(returnToken)
 
 	// 移除场上的牌
-	card, cardLevel, ok := t.RevealedDevelopmentCards.TakeCard(10001) // todo: 拿走一张牌
+	card, cardLevel, ok := t.RevealedDevelopmentCards.TakeCard(cardIdx)
 	if !ok {
 		return errors.New(fmt.Sprintf("没有拿到卡牌啊，咋回事"))
 	}
@@ -123,7 +80,7 @@ func ReserveDevelopmentCard(p *model.Player, t *model.Table, cardIdx int) error 
 	}
 
 	// 拿走想要的一张牌
-	card, cardLevel, ok := t.RevealedDevelopmentCards.TakeCard(10001) // todo: 拿走一张牌
+	card, cardLevel, ok := t.RevealedDevelopmentCards.TakeCard(cardIdx)
 	if !ok {
 		return errors.New(fmt.Sprintf("没有拿到卡牌啊，咋回事"))
 	}
@@ -233,7 +190,10 @@ func ReceiveNoble(p *model.Player, t *model.Table) error {
 		}
 
 		// 移除贵族
-		t.RevealedNobleTiles[idx] = nil
+		err = t.RemoveRevealedNoble(idx)
+		if err != nil {
+			return err
+		}
 		break
 	}
 
