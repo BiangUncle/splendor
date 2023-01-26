@@ -21,6 +21,11 @@ func NewGame() {
 	}
 }
 
+func RunServer() {
+	service.Run()
+}
+
 func main() {
-	NewGame()
+	//NewGame()
+	RunServer()
 }
