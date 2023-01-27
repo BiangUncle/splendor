@@ -7,7 +7,7 @@ import (
 )
 
 func TestPlayerAddToken(t *testing.T) {
-	table := model.CreateANewTable()
+	table := model.CreateTable()
 	t.Logf("%+v", table)
 
 	player1 := model.CreateANewPlayer()
@@ -22,7 +22,7 @@ func TestPlayerAddToken(t *testing.T) {
 }
 
 func TestShuffleDevCard(t *testing.T) {
-	table := model.CreateANewTable()
+	table := model.CreateTable()
 	t.Logf("%+v", table)
 
 	table.DevelopmentCardStacks.ShowIdxInfo()
@@ -31,7 +31,7 @@ func TestShuffleDevCard(t *testing.T) {
 }
 
 func TestShuffleNobleTile(t *testing.T) {
-	table := model.CreateANewTable()
+	table := model.CreateTable()
 	t.Logf("%+v", table)
 
 	table.NobleTilesStack.ShowIdxInfo()
@@ -40,7 +40,7 @@ func TestShuffleNobleTile(t *testing.T) {
 }
 
 func TestTakeTopCard(t *testing.T) {
-	table := model.CreateANewTable()
+	table := model.CreateTable()
 	t.Logf("%+v", table)
 
 	err := table.Reveal()
@@ -55,7 +55,7 @@ func TestTakeTopCard(t *testing.T) {
 }
 
 func TestPurchaseDevelopmentCard(t *testing.T) {
-	table := model.CreateANewTable()
+	table := model.CreateTable()
 	t.Logf("%+v\n", table.RevealedDevelopmentCards.ShowIdxInfo())
 	t.Logf("%+v\n", table.DevelopmentCardStacks.ShowIdxInfo())
 
@@ -82,7 +82,7 @@ func TestPurchaseDevelopmentCard(t *testing.T) {
 }
 
 func TestPurchaseDevelopmentCardWithToken(t *testing.T) {
-	table := model.CreateANewTable()
+	table := model.CreateTable()
 	table.ShowInfo()
 
 	err := table.Reveal()
@@ -107,7 +107,7 @@ func TestPurchaseDevelopmentCardWithToken(t *testing.T) {
 }
 
 func TestReserveDevelopmentCard(t *testing.T) {
-	table := model.CreateANewTable()
+	table := model.CreateTable()
 	table.ShowInfo()
 
 	err := table.Reveal()
@@ -132,7 +132,7 @@ func TestReserveDevelopmentCard(t *testing.T) {
 }
 
 func TestReserveStackCard(t *testing.T) {
-	table := model.CreateANewTable()
+	table := model.CreateTable()
 	table.ShowInfo()
 
 	err := table.Reveal()
@@ -160,7 +160,7 @@ func TestPurchaseHandCard(t *testing.T) {
 
 	fmt.Println("初始化游戏")
 
-	table := model.CreateANewTable()
+	table := model.CreateTable()
 	table.ShowInfo()
 
 	fmt.Println("洗牌")
@@ -199,7 +199,7 @@ func TestPurchaseHandCard(t *testing.T) {
 }
 
 func TestReceiveNoble(t *testing.T) {
-	table := model.CreateANewTable()
+	table := model.CreateTable()
 	table.ShowInfo()
 
 	player1 := model.CreateANewPlayer()

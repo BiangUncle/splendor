@@ -6,17 +6,20 @@ import (
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"splendor/model"
 	"splendor/utils"
 	"time"
 )
 
 type ConnectStatus struct {
-	CreateTime time.Time
+	CreateTime time.Time // 连接创建时间
+	TableID    string    // 桌台ID
 }
 
 func (c *ConnectStatus) Info() string {
 	info := ""
 	info = info + fmt.Sprintf("CreateTime: %+v\n", c.CreateTime)
+	info = info + fmt.Sprintf("TableID: %+v\n", c.TableID)
 	return info
 }
 
@@ -62,13 +65,22 @@ func Join(c *gin.Context) {
 	err := session.Save()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"msg": "set session failed",
+			"msg": err.Error(),
+		})
+		return
+	}
+
+	tableID, err := model.JoinNewTable()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
 		})
 		return
 	}
 
 	SessionsMap[uuid] = &ConnectStatus{
 		CreateTime: time.Now(),
+		TableID:    tableID,
 	}
 	fmt.Println(SessionsMap[uuid].Info())
 
@@ -77,6 +89,8 @@ func Join(c *gin.Context) {
 		"username":   username,
 		"msg":        "set session success",
 		"player_num": 1,
+		"table_id":   tableID,
+		"session_id": uuid,
 	})
 }
 
@@ -126,5 +140,7 @@ func Run() {
 	e.GET("/join", Join)
 	e.GET("/leave", Leave)
 	e.GET("/alive", Alive)
+	e.GET("/table_info", TableInfo)
+
 	e.Run(":8765")
 }

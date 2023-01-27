@@ -3,10 +3,13 @@ package model
 import (
 	"errors"
 	"fmt"
+	"splendor/utils"
 	"time"
 )
 
 const RevealedDevelopmentCardNumPerLevel = 4
+
+var GlobalTable = make(map[string]*Table)
 
 // Table 游戏桌面
 type Table struct {
@@ -24,8 +27,8 @@ type Table struct {
 	CurrentPlayer *Player // 当前角色
 }
 
-// CreateANewTable 开一桌
-func CreateANewTable() *Table {
+// CreateTable 创建一个桌布对象
+func CreateTable() *Table {
 	table := &Table{
 		Players:                  make([]*Player, 0),
 		GameTime:                 time.Now(),
@@ -37,6 +40,29 @@ func CreateANewTable() *Table {
 	}
 
 	return table
+}
+
+func CreateTableID() string {
+	return utils.GetUuidV4()
+}
+
+func JoinNewTable() (string, error) {
+
+	table := CreateTable()
+	tableID := CreateTableID()
+
+	if _, ok := GlobalTable[tableID]; ok {
+		return "", errors.New(fmt.Sprintf("这个桌子已经有了"))
+	}
+	GlobalTable[tableID] = table
+	return tableID, nil
+}
+
+func GetGlobalTable(tableID string) (*Table, error) {
+	if table, ok := GlobalTable[tableID]; ok {
+		return table, nil
+	}
+	return nil, errors.New(fmt.Sprintf("没有这个ID的桌, tableID = %+v", tableID))
 }
 
 // AddPlayer 添加玩家

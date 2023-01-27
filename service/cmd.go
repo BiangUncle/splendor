@@ -8,7 +8,7 @@ import (
 
 // CreateANewGame 创建一局新的游戏
 func CreateANewGame(playerNum int) (*model.Table, error) {
-	table := model.CreateANewTable()
+	table := model.CreateTable()
 
 	for i := 0; i < playerNum; i++ {
 		player := model.CreateANewPlayer()

@@ -5,12 +5,12 @@ import (
 )
 
 func TestCreateANewTable(t *testing.T) {
-	table := CreateANewTable()
+	table := CreateTable()
 	t.Logf("%+v", table)
 }
 
 func TestTable_ShowTableInfo(t *testing.T) {
-	table := CreateANewTable()
+	table := CreateTable()
 	player1 := CreateANewPlayer()
 	player2 := CreateANewPlayer()
 	table.AddPlayer(player1)

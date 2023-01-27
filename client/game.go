@@ -5,6 +5,11 @@ import (
 	"net/http"
 )
 
+type GameStatus struct {
+	ConnectStatus string
+	*Client
+}
+
 func (c *Client) SendRequest(uri string, args map[string]any) (*http.Response, error) {
 	url := c.ConstructURL(uri, args)
 	req, err := c.ConstructRequest(url, c.Cookies)
@@ -47,6 +52,20 @@ func (c *Client) Alive() (string, error) {
 
 func (c *Client) Leave() (string, error) {
 	resp, err := c.SendRequest("leave", map[string]any{})
+	if err != nil {
+		return "", err
+	}
+
+	content, err := c.ExtractBodyContent(resp)
+	if err != nil {
+		return "", err
+	}
+
+	return content, nil
+}
+
+func (c *Client) TableInfo() (string, error) {
+	resp, err := c.SendRequest("table_info", map[string]any{})
 	if err != nil {
 		return "", err
 	}
