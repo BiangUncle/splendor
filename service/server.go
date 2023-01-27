@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -143,6 +144,32 @@ func Alive(c *gin.Context) {
 	})
 }
 
+func GetSessionID(c *gin.Context) (string, error) {
+	session := sessions.Default(c)
+
+	username := session.Get("username")
+	var result string
+
+	if username != nil && username != "" {
+		result = username.(string)
+		if _, ok := SessionsMap[result]; !ok {
+			result = "no exist"
+			c.JSON(http.StatusOK, gin.H{
+				"result": result,
+			})
+			return result, errors.New("no sessionID")
+		}
+	} else {
+		result = "no exist"
+		c.JSON(http.StatusOK, gin.H{
+			"result": result,
+		})
+		return result, errors.New("no sessionID")
+	}
+
+	return result, nil
+}
+
 // Run 运行服务端
 func Run() {
 	e := gin.Default()
@@ -153,6 +180,8 @@ func Run() {
 	e.GET("/leave", Leave)
 	e.GET("/alive", Alive)
 	e.GET("/table_info", TableInfo)
+	e.GET("/cur_player", AskWhichTurn)
+	e.GET("/next_turn", NextTurn)
 
 	e.Run(":8765")
 }

@@ -7,6 +7,7 @@ import (
 	"splendor/model"
 )
 
+// TableInfo 获取桌面信息HTTP接口
 func TableInfo(c *gin.Context) {
 	session := sessions.Default(c)
 
@@ -33,13 +34,54 @@ func TableInfo(c *gin.Context) {
 	connectStatus := SessionsMap[result]
 	table, err := model.GetGlobalTable(connectStatus.TableID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		BuildErrorResponse(c, err)
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"tableInfo": table.ShowTableInfo(),
 	})
 	return
+}
+
+// AskWhichTurn 查询当前玩家轮次接口
+func AskWhichTurn(c *gin.Context) {
+	sessionID, err := GetSessionID(c)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	connectStatus := SessionsMap[sessionID]
+	table, err := model.GetGlobalTable(connectStatus.TableID)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	curPlayer := table.CurrentPlayer
+	c.JSON(http.StatusOK, gin.H{
+		"current_player_id": curPlayer.PlayerID,
+	})
+}
+
+// NextTurn 执行下一个轮次接口
+func NextTurn(c *gin.Context) {
+	sessionID, err := GetSessionID(c)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	connectStatus := SessionsMap[sessionID]
+	table, err := model.GetGlobalTable(connectStatus.TableID)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	curPlayer := table.NextTurn()
+	c.JSON(http.StatusOK, gin.H{
+		"current_player_id": curPlayer.PlayerID,
+	})
 }

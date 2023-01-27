@@ -72,3 +72,12 @@ func (c *Client) ExtractBodyContent(resp *http.Response) (string, error) {
 	}
 	return string(out), nil
 }
+
+func (c *Client) SendRequest(uri string, args map[string]any) (*http.Response, error) {
+	url := c.ConstructURL(uri, args)
+	req, err := c.ConstructRequest(url, c.Cookies)
+	if err != nil {
+		return nil, err
+	}
+	return c.Send(req)
+}

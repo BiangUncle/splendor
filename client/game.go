@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"splendor/utils"
 )
 
@@ -24,23 +23,28 @@ func (g *GameStatus) Info() string {
 	return ret
 }
 
-func (c *Client) SendRequest(uri string, args map[string]any) (*http.Response, error) {
-	url := c.ConstructURL(uri, args)
-	req, err := c.ConstructRequest(url, c.Cookies)
+func (g *GameStatus) AskWhichTurn() (string, error) {
+	resp, err := g.SendRequest("cur_player", map[string]any{})
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return c.Send(req)
+
+	content, err := g.ExtractBodyContent(resp)
+	if err != nil {
+		return "", err
+	}
+
+	return content, nil
 }
 
-func (c *Client) JoinGame() (string, error) {
-	resp, err := c.SendRequest("join", map[string]any{
+func (g *GameStatus) JoinGame() (string, error) {
+	resp, err := g.SendRequest("join", map[string]any{
 		"username": "biang",
 	})
 
-	c.Cookies = resp.Cookies()
+	g.Cookies = resp.Cookies()
 
-	content, err := c.ExtractBodyContent(resp)
+	content, err := g.ExtractBodyContent(resp)
 	if err != nil {
 		return "", err
 	}
@@ -48,27 +52,13 @@ func (c *Client) JoinGame() (string, error) {
 	return content, nil
 }
 
-func (c *Client) Alive() (string, error) {
-	resp, err := c.SendRequest("alive", map[string]any{})
+func (g *GameStatus) Alive() (string, error) {
+	resp, err := g.SendRequest("alive", map[string]any{})
 	if err != nil {
 		return "", err
 	}
 
-	content, err := c.ExtractBodyContent(resp)
-	if err != nil {
-		return "", err
-	}
-
-	return content, nil
-}
-
-func (c *Client) Leave() (string, error) {
-	resp, err := c.SendRequest("leave", map[string]any{})
-	if err != nil {
-		return "", err
-	}
-
-	content, err := c.ExtractBodyContent(resp)
+	content, err := g.ExtractBodyContent(resp)
 	if err != nil {
 		return "", err
 	}
@@ -76,13 +66,41 @@ func (c *Client) Leave() (string, error) {
 	return content, nil
 }
 
-func (c *Client) TableInfo() (string, error) {
-	resp, err := c.SendRequest("table_info", map[string]any{})
+func (g *GameStatus) Leave() (string, error) {
+	resp, err := g.SendRequest("leave", map[string]any{})
 	if err != nil {
 		return "", err
 	}
 
-	content, err := c.ExtractBodyContent(resp)
+	content, err := g.ExtractBodyContent(resp)
+	if err != nil {
+		return "", err
+	}
+
+	return content, nil
+}
+
+func (g *GameStatus) TableInfo() (string, error) {
+	resp, err := g.SendRequest("table_info", map[string]any{})
+	if err != nil {
+		return "", err
+	}
+
+	content, err := g.ExtractBodyContent(resp)
+	if err != nil {
+		return "", err
+	}
+
+	return content, nil
+}
+
+func (g *GameStatus) NextTurn() (string, error) {
+	resp, err := g.SendRequest("cur_player", map[string]any{})
+	if err != nil {
+		return "", err
+	}
+
+	content, err := g.ExtractBodyContent(resp)
 	if err != nil {
 		return "", err
 	}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/tidwall/gjson"
 	"splendor/utils"
+	"time"
 )
 
 func main() {
@@ -15,7 +16,20 @@ func main() {
 
 	for {
 		fmt.Println(g.Info())
-		fmt.Print("请选择需要的操作 1. 加入 2. 离开 3. 探测 4. 房间信息: ")
+
+		content, err := g.AskWhichTurn()
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
+
+		curPlayerID := gjson.Get(content, "current_player_id").String()
+		if curPlayerID != g.PlayerID {
+			time.Sleep(1)
+			continue
+		}
+
+		fmt.Print("请选择需要的操作 1.[加入] 2.[离开] 3.[探测] 4.[房间信息] 5.[下一位] 请选择:  ")
 
 		action, err := utils.InputInt()
 		if err != nil {
@@ -24,7 +38,7 @@ func main() {
 		}
 		switch action {
 		case 1:
-			content, err := c.JoinGame()
+			content, err := g.JoinGame()
 			if err != nil {
 				fmt.Println(err)
 				break
@@ -36,29 +50,37 @@ func main() {
 			g.UserName = gjson.Get(content, "username").String()
 
 		case 2:
-			content, err := c.Leave()
+			content, err := g.Leave()
 			if err != nil {
 				fmt.Println(err)
 				break
 			}
 			fmt.Println(content)
 		case 3:
-			content, err := c.Alive()
+			content, err := g.Alive()
 			if err != nil {
 				fmt.Println(err)
 				break
 			}
 			fmt.Println(content)
 		case 4:
-			content, err := c.TableInfo()
+			content, err := g.TableInfo()
 			if err != nil {
 				fmt.Println(err)
 				break
 			}
 			tableInfo := gjson.Get(content, "tableInfo").String()
 			fmt.Println(tableInfo)
+		case 5:
+			content, err := g.NextTurn()
+			if err != nil {
+				fmt.Println(err)
+				break
+			}
+			nextPlayerID := gjson.Get(content, "current_player_id").String()
+			fmt.Println(nextPlayerID)
 		case 0:
-			content, err := c.Leave()
+			content, err := g.Leave()
 			if err != nil {
 				fmt.Println(err)
 				break
@@ -68,5 +90,4 @@ func main() {
 			return
 		}
 	}
-
 }

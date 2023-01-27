@@ -24,7 +24,8 @@ type Table struct {
 
 	TokenStack TokenStack // 宝石卡堆
 
-	CurrentPlayer *Player // 当前角色
+	CurrentPlayer    *Player // 当前角色
+	CurrentPlayerIdx int     // 当前角色索引
 
 	TableID string // 桌台ID
 }
@@ -71,6 +72,10 @@ func GetGlobalTable(tableID string) (*Table, error) {
 // AddPlayer 添加玩家
 func (t *Table) AddPlayer(p *Player) {
 	t.Players = append(t.Players, p)
+	if len(t.Players) == 1 {
+		t.CurrentPlayer = p
+		t.CurrentPlayerIdx = 0
+	}
 }
 
 // Shuffle 发牌
@@ -253,4 +258,11 @@ func (t *Table) ShowTableInfo() string {
 	ret = ret + fmt.Sprintf("%s\n", line)
 
 	return ret
+}
+
+func (t *Table) NextTurn() *Player {
+	n := len(t.Players)
+	t.CurrentPlayerIdx = (t.CurrentPlayerIdx + 1) % n
+	t.CurrentPlayer = t.Players[t.CurrentPlayerIdx]
+	return t.CurrentPlayer
 }
