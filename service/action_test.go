@@ -10,7 +10,7 @@ func TestPlayerAddToken(t *testing.T) {
 	table := model.CreateTable()
 	t.Logf("%+v", table)
 
-	player1 := model.CreateANewPlayer()
+	player1 := model.CreatePlayer()
 	player1.ShowPlayerInfo()
 
 	err := Action(player1, table, 1)
@@ -67,7 +67,7 @@ func TestPurchaseDevelopmentCard(t *testing.T) {
 	t.Logf("%+v\n", table.RevealedDevelopmentCards.ShowIdxInfo())
 	t.Logf("%+v\n", table.DevelopmentCardStacks.ShowIdxInfo())
 
-	player1 := model.CreateANewPlayer()
+	player1 := model.CreatePlayer()
 	player1.ShowPlayerInfo()
 
 	err = PurchaseDevelopmentCard(player1, table, 10001) // todo 可配置
@@ -92,7 +92,7 @@ func TestPurchaseDevelopmentCardWithToken(t *testing.T) {
 
 	table.ShowInfo()
 
-	player1 := model.CreateANewPlayer()
+	player1 := model.CreatePlayer()
 	player1.Tokens.Add([]int{3, 3, 3, 3, 3, 0})
 	player1.ShowPlayerInfo()
 
@@ -117,7 +117,7 @@ func TestReserveDevelopmentCard(t *testing.T) {
 
 	table.ShowInfo()
 
-	player1 := model.CreateANewPlayer()
+	player1 := model.CreatePlayer()
 	player1.Tokens.Add([]int{3, 3, 3, 3, 3, 0})
 	player1.ShowPlayerInfo()
 
@@ -142,7 +142,7 @@ func TestReserveStackCard(t *testing.T) {
 
 	table.ShowInfo()
 
-	player1 := model.CreateANewPlayer()
+	player1 := model.CreatePlayer()
 	player1.Tokens.Add([]int{3, 3, 3, 3, 3, 0})
 	player1.ShowPlayerInfo()
 
@@ -174,7 +174,7 @@ func TestPurchaseHandCard(t *testing.T) {
 
 	fmt.Println("创建角色")
 
-	player1 := model.CreateANewPlayer()
+	player1 := model.CreatePlayer()
 	player1.Tokens.Add([]int{3, 3, 3, 3, 3, 0})
 	player1.ShowPlayerInfo()
 
@@ -202,7 +202,7 @@ func TestReceiveNoble(t *testing.T) {
 	table := model.CreateTable()
 	table.ShowInfo()
 
-	player1 := model.CreateANewPlayer()
+	player1 := model.CreatePlayer()
 	player1.Bonuses.Add([]int{3, 3, 3, 3, 3, 0})
 	player1.ShowPlayerInfo()
 

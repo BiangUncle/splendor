@@ -9,3 +9,11 @@ func GetUuidV1() string {
 func GetUuidV4() string {
 	return uuid.NewV4().String()
 }
+
+func CompressUuid(id string) string {
+	if len(id) <= 4 {
+		return id
+	}
+
+	return id[:2] + "**" + id[len(id)-2:]
+}

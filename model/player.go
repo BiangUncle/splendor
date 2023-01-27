@@ -3,9 +3,12 @@ package model
 import (
 	"errors"
 	"fmt"
+	"splendor/utils"
 )
 
 const HandCardUpperBound = 3
+
+var GlobalPlayer = make(map[string]*Player)
 
 type Player struct {
 	Name             string               // 玩家名字
@@ -15,10 +18,11 @@ type Player struct {
 	HandCards        DevelopmentCardStack // 手中的发展卡
 	NobleTitles      NobleTilesStack      // 贵族
 	Prestige         int                  // 声望
+	PlayerID         string               // 玩家ID
 }
 
-// CreateANewPlayer 创建一个玩家
-func CreateANewPlayer() *Player {
+// CreatePlayer 创建一个玩家
+func CreatePlayer() *Player {
 	return &Player{
 		Tokens:           CreateEmptyTokenStack(),
 		Bonuses:          CreateEmptyTokenStack(),
@@ -27,6 +31,30 @@ func CreateANewPlayer() *Player {
 		NobleTitles:      make(NobleTilesStack, 0),
 		Prestige:         0,
 	}
+}
+
+func CreatePlayerID() string {
+	return utils.GetUuidV4()
+}
+
+func JoinNewPlayer() (*Player, string, error) {
+
+	player := CreatePlayer()
+	playerID := CreatePlayerID()
+	player.PlayerID = playerID
+
+	if _, ok := GlobalPlayer[playerID]; ok {
+		return nil, "", errors.New(fmt.Sprintf("这个玩家已经已经有了"))
+	}
+	GlobalPlayer[playerID] = player
+	return player, playerID, nil
+}
+
+func GetGlobalPlayer(playerID string) (*Player, error) {
+	if player, ok := GlobalPlayer[playerID]; ok {
+		return player, nil
+	}
+	return nil, errors.New(fmt.Sprintf("没有这个ID的玩家, playerID = %+v", playerID))
 }
 
 // AddTokens 玩家获取宝石

@@ -25,6 +25,8 @@ type Table struct {
 	TokenStack TokenStack // 宝石卡堆
 
 	CurrentPlayer *Player // 当前角色
+
+	TableID string // 桌台ID
 }
 
 // CreateTable 创建一个桌布对象
@@ -46,16 +48,17 @@ func CreateTableID() string {
 	return utils.GetUuidV4()
 }
 
-func JoinNewTable() (string, error) {
+func JoinNewTable() (*Table, string, error) {
 
 	table := CreateTable()
 	tableID := CreateTableID()
+	table.TableID = tableID
 
 	if _, ok := GlobalTable[tableID]; ok {
-		return "", errors.New(fmt.Sprintf("这个桌子已经有了"))
+		return nil, "", errors.New(fmt.Sprintf("这个桌子已经有了"))
 	}
 	GlobalTable[tableID] = table
-	return tableID, nil
+	return table, tableID, nil
 }
 
 func GetGlobalTable(tableID string) (*Table, error) {
@@ -215,9 +218,11 @@ func (t *Table) ShowInfo() {
 }
 
 // ShowTableInfo 展示整场游戏信息
-func (t *Table) ShowTableInfo() {
+func (t *Table) ShowTableInfo() string {
 
 	infos := make([][]string, 0)
+
+	ret := ""
 
 	for _, player := range t.Players {
 		infos = append(infos, player.PlayerInfoString())
@@ -228,21 +233,24 @@ func (t *Table) ShowTableInfo() {
 		line = line + fmt.Sprintf("%s", "================================")
 	}
 
-	fmt.Printf("%s\n", line)
+	ret = ret + fmt.Sprintf("%s\n", line)
 
 	for i := 0; i < len(infos[0]); i++ {
-		ret := ""
+		infoRow := ""
 		for j := 0; j < len(infos); j++ {
-			ret = ret + fmt.Sprintf("| %-30s", infos[j][i])
+			infoRow = infoRow + fmt.Sprintf("| %-30s", infos[j][i])
 		}
-		ret = ret + "\n"
-		fmt.Print(ret)
+		infoRow = infoRow + "\n"
+		ret = ret + infoRow
 	}
 
-	fmt.Printf("%s\n", line)
+	ret = ret + fmt.Sprintf("%s\n", line)
 
 	for _, info := range t.TableInfoString() {
-		fmt.Printf("| %s\n", info)
+		ret = ret + fmt.Sprintf("| %s\n", info)
 	}
-	fmt.Printf("%s\n", line)
+
+	ret = ret + fmt.Sprintf("%s\n", line)
+
+	return ret
 }

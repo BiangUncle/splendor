@@ -5,6 +5,6 @@ import (
 )
 
 func TestCreateANewPlayer(t *testing.T) {
-	player := CreateANewPlayer()
+	player := CreatePlayer()
 	player.ShowPlayerInfoV2()
 }

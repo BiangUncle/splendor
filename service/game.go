@@ -39,7 +39,7 @@ func TableInfo(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"tableInfo": table.TableInfoString(),
+		"tableInfo": table.ShowTableInfo(),
 	})
 	return
 }

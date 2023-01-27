@@ -14,6 +14,7 @@ import (
 type ConnectStatus struct {
 	CreateTime time.Time // 连接创建时间
 	TableID    string    // 桌台ID
+	PlayerID   string    // 玩家ID
 }
 
 func (c *ConnectStatus) Info() string {
@@ -31,6 +32,12 @@ var SessionsMap = make(map[string]*ConnectStatus)
 游戏服务端框架 leaf
 https://github.com/name5566/leaf/blob/master/TUTORIAL_ZH.md
 */
+
+func BuildErrorResponse(c *gin.Context, err error) {
+	c.JSON(http.StatusInternalServerError, gin.H{
+		"msg": err.Error(),
+	})
+}
 
 // Count 统计在线人数
 func Count(c *gin.Context) {
@@ -64,24 +71,28 @@ func Join(c *gin.Context) {
 
 	err := session.Save()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"msg": err.Error(),
-		})
+		BuildErrorResponse(c, err)
 		return
 	}
 
-	tableID, err := model.JoinNewTable()
+	table, tableID, err := model.JoinNewTable()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"msg": err.Error(),
-		})
+		BuildErrorResponse(c, err)
 		return
 	}
+	player, playerID, err := model.JoinNewPlayer()
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+	table.AddPlayer(player)
 
 	SessionsMap[uuid] = &ConnectStatus{
 		CreateTime: time.Now(),
 		TableID:    tableID,
+		PlayerID:   playerID,
 	}
+
 	fmt.Println(SessionsMap[uuid].Info())
 
 	c.JSON(http.StatusOK, gin.H{
@@ -90,6 +101,7 @@ func Join(c *gin.Context) {
 		"msg":        "set session success",
 		"player_num": 1,
 		"table_id":   tableID,
+		"player_id":  playerID,
 		"session_id": uuid,
 	})
 }

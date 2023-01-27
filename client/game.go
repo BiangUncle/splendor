@@ -3,11 +3,25 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"splendor/utils"
 )
 
 type GameStatus struct {
 	ConnectStatus string
+	SessionID     string
+	TableID       string
+	PlayerID      string
+	UserName      string
 	*Client
+}
+
+func (g *GameStatus) Info() string {
+	ret := fmt.Sprintf("[%+v]", g.UserName)
+	ret += fmt.Sprintf("状态: %+v; ", g.ConnectStatus)
+	ret += fmt.Sprintf("会话: %+v; ", utils.CompressUuid(g.SessionID))
+	ret += fmt.Sprintf("房间: %+v; ", utils.CompressUuid(g.TableID))
+	ret += fmt.Sprintf("玩家: %+v;\n ", utils.CompressUuid(g.PlayerID))
+	return ret
 }
 
 func (c *Client) SendRequest(uri string, args map[string]any) (*http.Response, error) {
@@ -31,9 +45,7 @@ func (c *Client) JoinGame() (string, error) {
 		return "", err
 	}
 
-	fmt.Println(content)
-
-	return "ok", nil
+	return content, nil
 }
 
 func (c *Client) Alive() (string, error) {

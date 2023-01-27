@@ -11,8 +11,8 @@ func TestCreateANewTable(t *testing.T) {
 
 func TestTable_ShowTableInfo(t *testing.T) {
 	table := CreateTable()
-	player1 := CreateANewPlayer()
-	player2 := CreateANewPlayer()
+	player1 := CreatePlayer()
+	player2 := CreatePlayer()
 	table.AddPlayer(player1)
 	table.AddPlayer(player2)
 

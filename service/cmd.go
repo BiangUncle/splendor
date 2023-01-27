@@ -11,7 +11,7 @@ func CreateANewGame(playerNum int) (*model.Table, error) {
 	table := model.CreateTable()
 
 	for i := 0; i < playerNum; i++ {
-		player := model.CreateANewPlayer()
+		player := model.CreatePlayer()
 		player.Name = fmt.Sprintf("玩家%d", i+1)
 		table.AddPlayer(player)
 	}
@@ -21,7 +21,7 @@ func CreateANewGame(playerNum int) (*model.Table, error) {
 		return nil, err
 	}
 
-	table.ShowTableInfo()
+	fmt.Println(table.ShowTableInfo())
 	return table, nil
 }
 
@@ -52,7 +52,7 @@ func TurnRound(table *model.Table) error {
 			}
 		}
 		round++
-		table.ShowTableInfo()
+		fmt.Println(table.ShowTableInfo())
 	}
 
 	return nil
