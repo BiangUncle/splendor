@@ -10,6 +10,8 @@ import (
 const RevealedDevelopmentCardNumPerLevel = 4
 
 var GlobalTable = make(map[string]*Table)
+var defaultTable *Table
+var defaultTableID string
 
 // Table 游戏桌面
 type Table struct {
@@ -28,6 +30,27 @@ type Table struct {
 	CurrentPlayerIdx int     // 当前角色索引
 
 	TableID string // 桌台ID
+	Name    string // 桌台名字
+}
+
+// InitDefaultTable 创建一个default桌台
+func InitDefaultTable() {
+	table, tableID, err := JoinNewTable()
+	if err != nil {
+		panic(err)
+	}
+	table.Name = "默认桌台"
+
+	defaultTable = table
+	defaultTableID = tableID
+}
+
+// JoinDefaultTable 加入default桌台
+func JoinDefaultTable(player *Player) (*Table, string, error) {
+	nextIdx := len(defaultTable.Players)
+	player.Name = fmt.Sprintf("玩家[%+v]", nextIdx)
+	defaultTable.AddPlayer(player)
+	return defaultTable, defaultTableID, nil
 }
 
 // CreateTable 创建一个桌布对象
@@ -45,10 +68,12 @@ func CreateTable() *Table {
 	return table
 }
 
+// CreateTableID 创建桌台ID
 func CreateTableID() string {
 	return utils.GetUuidV4()
 }
 
+// JoinNewTable 加入一个新的桌台
 func JoinNewTable() (*Table, string, error) {
 
 	table := CreateTable()
@@ -62,6 +87,7 @@ func JoinNewTable() (*Table, string, error) {
 	return table, tableID, nil
 }
 
+// GetGlobalTable 根据tableID获取桌台
 func GetGlobalTable(tableID string) (*Table, error) {
 	if table, ok := GlobalTable[tableID]; ok {
 		return table, nil
@@ -203,6 +229,7 @@ func (t *Table) RemoveRevealedNoble(idx int) error {
 // TableInfoString 玩家的信息
 func (t *Table) TableInfoString() []string {
 	return []string{
+		fmt.Sprintf("%-15s %+v", "Name:", t.Name),
 		fmt.Sprintf("%-15s %+v", "Token:", t.TokenStack),
 		fmt.Sprintf("%-15s %+v", "DevCard:", t.DevelopmentCardStacks.ShowIdxInfo()),
 		fmt.Sprintf("%-15s %+v", "RevealCards:", t.RevealedDevelopmentCards.ShowIdxInfo()),
@@ -260,6 +287,7 @@ func (t *Table) ShowTableInfo() string {
 	return ret
 }
 
+// NextTurn 下一位
 func (t *Table) NextTurn() *Player {
 	n := len(t.Players)
 	t.CurrentPlayerIdx = (t.CurrentPlayerIdx + 1) % n

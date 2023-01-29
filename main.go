@@ -8,6 +8,7 @@ import (
 func init() {
 	model.CsvFilePath = "csv/"
 	model.Init()
+	model.InitDefaultTable()
 }
 
 func NewGame() {

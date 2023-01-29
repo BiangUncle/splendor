@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -81,7 +82,10 @@ func NextTurn(c *gin.Context) {
 	}
 
 	curPlayer := table.NextTurn()
+
+	fmt.Println(curPlayer.PlayerInfoString())
 	c.JSON(http.StatusOK, gin.H{
-		"current_player_id": curPlayer.PlayerID,
+		"current_player_id":   curPlayer.PlayerID,
+		"current_player_name": curPlayer.Name,
 	})
 }

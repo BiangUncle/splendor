@@ -12,7 +12,7 @@ func TestClient_ConstructURL(t *testing.T) {
 	}
 	type args struct {
 		uri  string
-		args map[string]string
+		args map[string]any
 	}
 	tests := []struct {
 		name   string
@@ -28,7 +28,7 @@ func TestClient_ConstructURL(t *testing.T) {
 			},
 			args{
 				"join",
-				make(map[string]string, 0),
+				make(map[string]any, 0),
 			},
 			"http://127.0.0.1:8765/join",
 		},
@@ -40,7 +40,7 @@ func TestClient_ConstructURL(t *testing.T) {
 			},
 			args{
 				"join",
-				map[string]string{
+				map[string]any{
 					"username": "biang",
 				},
 			},

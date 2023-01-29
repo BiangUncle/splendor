@@ -40,22 +40,6 @@ func BuildErrorResponse(c *gin.Context, err error) {
 	})
 }
 
-// Count 统计在线人数
-func Count(c *gin.Context) {
-	session := sessions.Default(c)
-	var count int
-	v := session.Get("count")
-	if v == nil {
-		count = 0
-	} else {
-		count = v.(int)
-		count++
-	}
-	session.Set("count", count)
-	session.Save()
-	c.JSON(200, gin.H{"count": count})
-}
-
 func Ping(c *gin.Context) {
 	c.String(http.StatusOK, "Pong")
 }
@@ -76,17 +60,17 @@ func Join(c *gin.Context) {
 		return
 	}
 
-	table, tableID, err := model.JoinNewTable()
-	if err != nil {
-		BuildErrorResponse(c, err)
-		return
-	}
 	player, playerID, err := model.JoinNewPlayer()
 	if err != nil {
 		BuildErrorResponse(c, err)
 		return
 	}
-	table.AddPlayer(player)
+
+	_, tableID, err := model.JoinDefaultTable(player)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
 
 	SessionsMap[uuid] = &ConnectStatus{
 		CreateTime: time.Now(),

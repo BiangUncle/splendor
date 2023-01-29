@@ -95,7 +95,7 @@ func (g *GameStatus) TableInfo() (string, error) {
 }
 
 func (g *GameStatus) NextTurn() (string, error) {
-	resp, err := g.SendRequest("cur_player", map[string]any{})
+	resp, err := g.SendRequest("next_turn", map[string]any{})
 	if err != nil {
 		return "", err
 	}

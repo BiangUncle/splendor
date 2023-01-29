@@ -224,6 +224,7 @@ func (p *Player) ShowPlayerInfoV2() {
 // PlayerInfoString 玩家的信息
 func (p *Player) PlayerInfoString() []string {
 	return []string{
+		fmt.Sprintf("%-10s %+v", "Name:", p.Name),
 		fmt.Sprintf("%-10s %+v", "Token:", p.Tokens),
 		fmt.Sprintf("%-10s %+v", "Bonuses:", p.Bonuses),
 		fmt.Sprintf("%-10s %+v", "Cards:", p.DevelopmentCards.ShowIdxInfo()),

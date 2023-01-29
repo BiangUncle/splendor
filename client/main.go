@@ -25,7 +25,7 @@ func main() {
 
 		curPlayerID := gjson.Get(content, "current_player_id").String()
 		if curPlayerID != g.PlayerID {
-			time.Sleep(1)
+			time.Sleep(time.Second)
 			continue
 		}
 
@@ -77,8 +77,8 @@ func main() {
 				fmt.Println(err)
 				break
 			}
-			nextPlayerID := gjson.Get(content, "current_player_id").String()
-			fmt.Println(nextPlayerID)
+			nextPlayerName := gjson.Get(content, "current_player_name").String()
+			fmt.Println(fmt.Sprintf("下一个是 %+v 操作", nextPlayerName))
 		case 0:
 			content, err := g.Leave()
 			if err != nil {
