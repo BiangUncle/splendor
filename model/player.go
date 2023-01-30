@@ -4,11 +4,14 @@ import (
 	"errors"
 	"fmt"
 	"splendor/utils"
+	"time"
 )
 
 const HandCardUpperBound = 3
 
 var GlobalPlayer = make(map[string]*Player)
+
+var PlayerLastLoginTime = make(map[string]time.Time)
 
 type Player struct {
 	Name             string               // 玩家名字
@@ -48,6 +51,51 @@ func JoinNewPlayer() (*Player, string, error) {
 	}
 	GlobalPlayer[playerID] = player
 	return player, playerID, nil
+}
+
+// KeepALive 保持活度
+func KeepALive(playerID string) {
+	PlayerLastLoginTime[playerID] = time.Now()
+}
+
+// CheckIfOnline 确认是否在线
+func CheckIfOnline(playerID string) bool {
+	if lastTime, ok := PlayerLastLoginTime[playerID]; ok {
+		now := time.Now()
+		// 大于 10s 就是没激活
+		if now.Sub(lastTime) > 10*time.Second {
+			return false
+		}
+		return true
+	}
+	return false
+}
+
+func CheckAllPlayerNetStatus() []*Player {
+	var offlinePlayerIDs []*Player
+
+	for playerID, player := range GlobalPlayer {
+		if !CheckIfOnline(playerID) {
+			fmt.Printf("玩家 %+v 已离线\n", player.Name)
+			offlinePlayerIDs = append(offlinePlayerIDs, player)
+		}
+	}
+
+	return offlinePlayerIDs
+}
+
+func ClearOfflinePlayer() {
+	offlinePlayers := CheckAllPlayerNetStatus()
+	for _, player := range offlinePlayers {
+		fmt.Printf("清理离线用户: %+v\n", player.Name)
+		DeleteGlobalPlayer(player.PlayerID)
+	}
+}
+
+// DeleteGlobalPlayer 删除玩家全局信息
+func DeleteGlobalPlayer(playerID string) {
+	delete(GlobalPlayer, playerID)
+	delete(PlayerLastLoginTime, playerID)
 }
 
 func GetGlobalPlayer(playerID string) (*Player, error) {

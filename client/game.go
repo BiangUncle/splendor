@@ -1,8 +1,12 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"github.com/tidwall/gjson"
+	"net/http"
 	"splendor/utils"
+	"time"
 )
 
 type GameStatus struct {
@@ -12,6 +16,7 @@ type GameStatus struct {
 	PlayerID      string
 	UserName      string
 	*Client
+	*GameCron
 }
 
 func (g *GameStatus) Info() string {
@@ -106,4 +111,29 @@ func (g *GameStatus) NextTurn() (string, error) {
 	}
 
 	return content, nil
+}
+
+func (g *GameStatus) KeepALive() (string, error) {
+	resp, err := g.SendRequest("keep_a_live", map[string]any{})
+	if err != nil {
+		return "", err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return "", errors.New(fmt.Sprintf("错误码: %+v", resp.StatusCode))
+	}
+	return "ok", nil
+}
+
+func (g *GameStatus) IfMyTurn() (bool, error) {
+	content, err := g.AskWhichTurn()
+	if err != nil {
+		return false, err
+	}
+
+	curPlayerID := gjson.Get(content, "current_player_id").String()
+	if curPlayerID != g.PlayerID {
+		time.Sleep(time.Second)
+		return false, nil
+	}
+	return true, nil
 }

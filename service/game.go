@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -83,9 +82,24 @@ func NextTurn(c *gin.Context) {
 
 	curPlayer := table.NextTurn()
 
-	fmt.Println(curPlayer.PlayerInfoString())
 	c.JSON(http.StatusOK, gin.H{
 		"current_player_id":   curPlayer.PlayerID,
 		"current_player_name": curPlayer.Name,
 	})
+}
+
+// KeepALive 保活
+func KeepALive(c *gin.Context) {
+	sessionID, err := GetSessionID(c)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	connectStatus := SessionsMap[sessionID]
+	playerID := connectStatus.PlayerID
+
+	model.KeepALive(playerID)
+
+	c.String(http.StatusOK, "ok")
 }

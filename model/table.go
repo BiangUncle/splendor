@@ -95,6 +95,37 @@ func GetGlobalTable(tableID string) (*Table, error) {
 	return nil, errors.New(fmt.Sprintf("没有这个ID的桌, tableID = %+v", tableID))
 }
 
+// LeaveDefaultTable 离开default桌子
+func LeaveDefaultTable(playerId string) {
+	leaveId := -1
+	var leavePlayer *Player
+	for idx, player := range defaultTable.Players {
+		if player.PlayerID == playerId {
+			leaveId = idx
+			leavePlayer = player
+			break
+		}
+	}
+
+	// 该桌台里面有需要退出的玩家
+	if leaveId != -1 {
+		defaultTable.Players = append(defaultTable.Players[:leaveId], defaultTable.Players[leaveId+1:]...)
+		// 如果为空，全部置空
+		if len(defaultTable.Players) == 0 {
+			defaultTable.CurrentPlayerIdx = -1
+			defaultTable.CurrentPlayer = nil
+		} else if defaultTable.CurrentPlayer == leavePlayer { // 如果当前操作对象掉线, 下一个为操作对象
+			n := len(defaultTable.Players)
+			defaultTable.CurrentPlayerIdx = (defaultTable.CurrentPlayerIdx + 1) % n
+		}
+	}
+}
+
+// ClearDefaultTable 清理default桌子
+func ClearDefaultTable() {
+	defaultTable.ClearLoginOutPlayer()
+}
+
 // AddPlayer 添加玩家
 func (t *Table) AddPlayer(p *Player) {
 	t.Players = append(t.Players, p)
@@ -230,6 +261,7 @@ func (t *Table) RemoveRevealedNoble(idx int) error {
 func (t *Table) TableInfoString() []string {
 	return []string{
 		fmt.Sprintf("%-15s %+v", "Name:", t.Name),
+		fmt.Sprintf("%-15s %+v", "CurPlayer:", t.CurrentPlayer.Name),
 		fmt.Sprintf("%-15s %+v", "Token:", t.TokenStack),
 		fmt.Sprintf("%-15s %+v", "DevCard:", t.DevelopmentCardStacks.ShowIdxInfo()),
 		fmt.Sprintf("%-15s %+v", "RevealCards:", t.RevealedDevelopmentCards.ShowIdxInfo()),
@@ -293,4 +325,33 @@ func (t *Table) NextTurn() *Player {
 	t.CurrentPlayerIdx = (t.CurrentPlayerIdx + 1) % n
 	t.CurrentPlayer = t.Players[t.CurrentPlayerIdx]
 	return t.CurrentPlayer
+}
+
+// ClearLoginOutPlayer 清楚未在线用户
+func (t *Table) ClearLoginOutPlayer() {
+	var onlinePlayers []*Player
+	for _, player := range t.Players {
+		if CheckIfOnline(player.PlayerID) {
+			onlinePlayers = append(onlinePlayers, player)
+		} else {
+			fmt.Printf("玩家: %+v 已离线\n", player.Name)
+		}
+	}
+
+	beforeCurrentPlayer := t.CurrentPlayer
+
+	t.CurrentPlayer = nil
+	t.CurrentPlayerIdx = -1
+	t.Players = onlinePlayers
+	for idx, player := range t.Players {
+		if player == beforeCurrentPlayer {
+			t.CurrentPlayerIdx = idx
+		}
+	}
+
+	// todo 有BUG，有人最好直接掉线
+	if len(t.Players) > 0 {
+		t.CurrentPlayerIdx = 0
+		t.CurrentPlayer = t.Players[0]
+	}
 }

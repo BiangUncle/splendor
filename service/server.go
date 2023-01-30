@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/gin-contrib/sessions"
@@ -9,6 +10,7 @@ import (
 	"net/http"
 	"splendor/model"
 	"splendor/utils"
+	"sync"
 	"time"
 )
 
@@ -162,10 +164,45 @@ func Run() {
 	e.GET("/ping", Ping)
 	e.GET("/join", Join)
 	e.GET("/leave", Leave)
-	e.GET("/alive", Alive)
+	e.GET("/alive", Alive, KeepALive)
 	e.GET("/table_info", TableInfo)
 	e.GET("/cur_player", AskWhichTurn)
 	e.GET("/next_turn", NextTurn)
+	e.GET("/keep_a_live", KeepALive)
 
-	e.Run(":8765")
+	srv := &http.Server{
+		Addr:    ":8765",
+		Handler: e,
+	}
+	c := &OneCron{
+		stop: make(chan struct{}),
+	}
+	wg := &sync.WaitGroup{}
+	wg.Add(2)
+
+	go func() {
+		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+			fmt.Println(err)
+		}
+		fmt.Println("服务端: ", "程序退出")
+		wg.Done()
+	}()
+	go func() {
+		c.Run()
+		wg.Done()
+	}()
+
+	stop := make(chan struct{})
+	defer close(stop)
+
+	utils.InputInt()
+
+	err := srv.Shutdown(context.Background()) // 关闭服务器
+	if err != nil {
+		fmt.Println(err)
+	}
+	c.Stop() // 关闭清理线程
+	fmt.Println("服务端: ", "等待其他协程退出")
+	wg.Wait()
+
 }
