@@ -34,3 +34,12 @@ func InputInt() (int, error) {
 	}
 	return i, nil
 }
+
+func InputString() (string, error) {
+	var s string
+	_, err := fmt.Scanf("%s", &s)
+	if err != nil {
+		return "", err
+	}
+	return s, nil
+}

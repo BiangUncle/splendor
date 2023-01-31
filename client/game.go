@@ -6,7 +6,7 @@ import (
 	"github.com/tidwall/gjson"
 	"net/http"
 	"splendor/utils"
-	"time"
+	"sync"
 )
 
 type GameStatus struct {
@@ -19,13 +19,36 @@ type GameStatus struct {
 	*GameCron
 }
 
-func (g *GameStatus) Info() string {
-	ret := fmt.Sprintf("[%+v]", g.UserName)
-	ret += fmt.Sprintf("状态: %+v; ", g.ConnectStatus)
-	ret += fmt.Sprintf("会话: %+v; ", utils.CompressUuid(g.SessionID))
-	ret += fmt.Sprintf("房间: %+v; ", utils.CompressUuid(g.TableID))
-	ret += fmt.Sprintf("玩家: %+v;\n ", utils.CompressUuid(g.PlayerID))
-	return ret
+func ConstructGameStatus(c *Client) *GameStatus {
+	g := &GameStatus{
+		Client: c,
+		GameCron: &GameCron{
+			stop: make(chan struct{}),
+			wg:   &sync.WaitGroup{},
+		},
+	}
+
+	return g
+}
+
+func (g *GameStatus) Info() []string {
+	return []string{
+		fmt.Sprintf("玩家[%+v] ", g.UserName),
+		fmt.Sprintf("状态[%+v] ", g.ConnectStatus),
+		fmt.Sprintf("会话[%+v] ", utils.CompressUuid(g.SessionID)),
+		fmt.Sprintf("房间[%+v] ", utils.CompressUuid(g.TableID)),
+		fmt.Sprintf("玩家[%+v] ", utils.CompressUuid(g.PlayerID)),
+	}
+}
+
+func (g *GameStatus) ShowPlayerInfo() {
+	fmt.Println("============================================================")
+	infoRow := ""
+	for _, info := range g.Info() {
+		infoRow += info
+	}
+	fmt.Println(infoRow)
+	fmt.Println("============================================================")
 }
 
 func (g *GameStatus) AskWhichTurn() (string, error) {
@@ -124,16 +147,50 @@ func (g *GameStatus) KeepALive() (string, error) {
 	return "ok", nil
 }
 
+// IsOurTurn 检查是否为自己的回合，异常打印
+func (g *GameStatus) IsOurTurn() bool {
+	yes, err := g.IfMyTurn()
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	if !yes {
+		fmt.Println("不是你的回合")
+		return false
+	}
+	return true
+}
+
 func (g *GameStatus) IfMyTurn() (bool, error) {
 	content, err := g.AskWhichTurn()
 	if err != nil {
 		return false, err
 	}
+	fmt.Println(content)
 
 	curPlayerID := gjson.Get(content, "current_player_id").String()
 	if curPlayerID != g.PlayerID {
-		time.Sleep(time.Second)
 		return false, nil
 	}
 	return true, nil
+}
+
+func (g *GameStatus) TakeThreeTokens(tokensString string) (string, error) {
+	_, err := g.SendRequest("take_three_tokens", map[string]any{
+		"tokens": tokensString,
+	})
+	if err != nil {
+		return "", err
+	}
+	return "ok", nil
+}
+
+func (g *GameStatus) TakeDoubleTokens(tokenId int) (string, error) {
+	_, err := g.SendRequest("take_double_tokens", map[string]any{
+		"token_id": tokenId,
+	})
+	if err != nil {
+		return "", err
+	}
+	return "ok", nil
 }

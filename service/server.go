@@ -50,6 +50,7 @@ func Join(c *gin.Context) {
 
 	// 获取用户名
 	username := c.Query("username")
+	_ = username
 	session := sessions.Default(c)
 
 	uuid := utils.GetUuidV1()
@@ -84,7 +85,7 @@ func Join(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":     "created",
-		"username":   username,
+		"username":   player.Name,
 		"msg":        "set session success",
 		"player_num": 1,
 		"table_id":   tableID,
@@ -169,6 +170,8 @@ func Run() {
 	e.GET("/cur_player", AskWhichTurn)
 	e.GET("/next_turn", NextTurn)
 	e.GET("/keep_a_live", KeepALive)
+	e.GET("/take_three_tokens", TakeThreeTokens)
+	e.GET("/take_double_tokens", TakeDoubleTokens)
 
 	srv := &http.Server{
 		Addr:    ":8765",

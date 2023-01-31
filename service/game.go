@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"splendor/model"
+	"splendor/utils"
 )
 
 // TableInfo 获取桌面信息HTTP接口
@@ -53,15 +54,13 @@ func AskWhichTurn(c *gin.Context) {
 	}
 
 	connectStatus := SessionsMap[sessionID]
-	table, err := model.GetGlobalTable(connectStatus.TableID)
-	if err != nil {
-		BuildErrorResponse(c, err)
-		return
-	}
+	_ = connectStatus
+	table := model.GetDefaultTable()
 
 	curPlayer := table.CurrentPlayer
 	c.JSON(http.StatusOK, gin.H{
-		"current_player_id": curPlayer.PlayerID,
+		"current_player_id":   curPlayer.PlayerID,
+		"current_player_name": curPlayer.Name,
 	})
 }
 
@@ -74,11 +73,8 @@ func NextTurn(c *gin.Context) {
 	}
 
 	connectStatus := SessionsMap[sessionID]
-	table, err := model.GetGlobalTable(connectStatus.TableID)
-	if err != nil {
-		BuildErrorResponse(c, err)
-		return
-	}
+	_ = connectStatus
+	table := model.GetDefaultTable()
 
 	curPlayer := table.NextTurn()
 
@@ -100,6 +96,62 @@ func KeepALive(c *gin.Context) {
 	playerID := connectStatus.PlayerID
 
 	model.KeepALive(playerID)
+
+	c.String(http.StatusOK, "ok")
+}
+
+func TakeThreeTokens(c *gin.Context) {
+	sessionID, err := GetSessionID(c)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	connectStatus := SessionsMap[sessionID]
+	table := model.GetDefaultTable()
+	player, err := model.GetGlobalPlayer(connectStatus.PlayerID)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	tokensStrings := c.Query("tokens")
+	var tokens []int
+	for i := 0; i < len(tokensStrings); i++ {
+		tokens = append(tokens, int(tokensStrings[i]-'0'))
+	}
+
+	err = ActionTakeThreeTokens(player, table, tokens)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	c.String(http.StatusOK, "ok")
+}
+
+func TakeDoubleTokens(c *gin.Context) {
+	sessionID, err := GetSessionID(c)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	connectStatus := SessionsMap[sessionID]
+	table := model.GetDefaultTable()
+	player, err := model.GetGlobalPlayer(connectStatus.PlayerID)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	tokenIDString := c.Query("token_id")
+	tokenID := utils.ToInt(tokenIDString)
+	err = ActionTakeDoubleTokens(player, table, tokenID)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
 
 	c.String(http.StatusOK, "ok")
 }

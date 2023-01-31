@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
+	"sync"
 	"time"
 )
 
 type GameCron struct {
 	stop chan struct{}
+	wg   *sync.WaitGroup
 }
 
 func (g *GameCron) Stop() {
@@ -25,6 +27,7 @@ func (g *GameStatus) RoutineKeepALive() {
 		case <-g.stop:
 			fmt.Println("心跳协程: ", "关闭保活协程")
 			close(g.stop)
+			g.wg.Done()
 			return
 		}
 	}

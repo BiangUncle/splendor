@@ -281,3 +281,12 @@ func (p *Player) PlayerInfoString() []string {
 		fmt.Sprintf("%-10s %+v", "Prestige:", p.Prestige),
 	}
 }
+
+// TakeOutTokens 从手牌拿出宝石
+func (p *Player) TakeOutTokens(t TokenStack) (TokenStack, error) {
+	err := p.Tokens.Minus(t)
+	if err != nil {
+		return nil, err
+	}
+	return t, nil
+}

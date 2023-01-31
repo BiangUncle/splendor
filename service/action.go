@@ -199,3 +199,8 @@ func ReceiveNoble(p *model.Player, t *model.Table) error {
 
 	return nil
 }
+
+// PurchaseDevelopmentCardByTokens 给定tokens来购买发展卡, 给玩家有使用或者不使用金币的权力
+func PurchaseDevelopmentCardByTokens(p *model.Player, t *model.Table, tokens []int, cardIdx int) error {
+	return model.PurchaseDevelopmentCard(p, tokens, t, cardIdx)
+}

@@ -95,6 +95,10 @@ func GetGlobalTable(tableID string) (*Table, error) {
 	return nil, errors.New(fmt.Sprintf("没有这个ID的桌, tableID = %+v", tableID))
 }
 
+func GetDefaultTable() *Table {
+	return defaultTable
+}
+
 // LeaveDefaultTable 离开default桌子
 func LeaveDefaultTable(playerId string) {
 	leaveId := -1
@@ -325,6 +329,16 @@ func (t *Table) NextTurn() *Player {
 	t.CurrentPlayerIdx = (t.CurrentPlayerIdx + 1) % n
 	t.CurrentPlayer = t.Players[t.CurrentPlayerIdx]
 	return t.CurrentPlayer
+}
+
+func (t *Table) FindPlayerIdx(p *Player) int {
+	ret := -1
+	for idx, player := range t.Players {
+		if player == p {
+			ret = idx
+		}
+	}
+	return ret
 }
 
 // ClearLoginOutPlayer 清楚未在线用户
