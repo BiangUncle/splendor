@@ -43,6 +43,8 @@ func InitDefaultTable() {
 
 	defaultTable = table
 	defaultTableID = tableID
+
+	defaultTable.Reveal()
 }
 
 // JoinDefaultTable 加入default桌台
@@ -298,15 +300,17 @@ func (t *Table) ShowTableInfo() string {
 
 	line := ""
 	for j := 0; j < len(infos); j++ {
-		line = line + fmt.Sprintf("%s", "================================")
+		line = line + fmt.Sprintf("%s", "\u001B[40m                                \u001B[0m")
 	}
+
+	left := "\u001B[40m \u001B[0m"
 
 	ret = ret + fmt.Sprintf("%s\n", line)
 
 	for i := 0; i < len(infos[0]); i++ {
 		infoRow := ""
 		for j := 0; j < len(infos); j++ {
-			infoRow = infoRow + fmt.Sprintf("| %-30s", infos[j][i])
+			infoRow = infoRow + fmt.Sprintf("%s %-30s", left, infos[j][i])
 		}
 		infoRow = infoRow + "\n"
 		ret = ret + infoRow
@@ -315,7 +319,7 @@ func (t *Table) ShowTableInfo() string {
 	ret = ret + fmt.Sprintf("%s\n", line)
 
 	for _, info := range t.TableInfoString() {
-		ret = ret + fmt.Sprintf("| %s\n", info)
+		ret = ret + fmt.Sprintf("%s %s\n", left, info)
 	}
 
 	ret = ret + fmt.Sprintf("%s\n", line)
@@ -368,4 +372,15 @@ func (t *Table) ClearLoginOutPlayer() {
 		t.CurrentPlayerIdx = 0
 		t.CurrentPlayer = t.Players[0]
 	}
+}
+
+func (t *Table) ShowVisualInfo() {
+
+	fmt.Println("\033[40m                                                                \033[0m")
+	fmt.Println(t.TokenStack.Visual())
+	fmt.Printf("[%d] %s\n", len(t.DevelopmentCardStacks.TopStack), t.RevealedDevelopmentCards.TopStack.Visual())
+	fmt.Printf("[%d] %s\n", len(t.DevelopmentCardStacks.MiddleStack), t.RevealedDevelopmentCards.MiddleStack.Visual())
+	fmt.Printf("[%d] %s\n", len(t.DevelopmentCardStacks.BottomStack), t.RevealedDevelopmentCards.BottomStack.Visual())
+	fmt.Println(t.RevealedNobleTiles.Visual())
+	fmt.Println("\033[40m                                                                \033[0m")
 }

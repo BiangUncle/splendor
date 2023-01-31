@@ -100,6 +100,7 @@ func KeepALive(c *gin.Context) {
 	c.String(http.StatusOK, "ok")
 }
 
+// TakeThreeTokens 拿走三个宝石
 func TakeThreeTokens(c *gin.Context) {
 	sessionID, err := GetSessionID(c)
 	if err != nil {
@@ -132,6 +133,7 @@ func TakeThreeTokens(c *gin.Context) {
 	})
 }
 
+// TakeDoubleTokens 拿走两个宝石
 func TakeDoubleTokens(c *gin.Context) {
 	sessionID, err := GetSessionID(c)
 	if err != nil {

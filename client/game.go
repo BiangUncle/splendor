@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/fatih/color"
 	"github.com/tidwall/gjson"
 	"net/http"
 	"splendor/utils"
@@ -32,23 +33,27 @@ func ConstructGameStatus(c *Client) *GameStatus {
 }
 
 func (g *GameStatus) Info() []string {
+
+	c := color.New(color.FgCyan)
+
 	return []string{
-		fmt.Sprintf("玩家[%+v] ", g.UserName),
-		fmt.Sprintf("状态[%+v] ", g.ConnectStatus),
-		fmt.Sprintf("会话[%+v] ", utils.CompressUuid(g.SessionID)),
-		fmt.Sprintf("房间[%+v] ", utils.CompressUuid(g.TableID)),
-		fmt.Sprintf("玩家[%+v] ", utils.CompressUuid(g.PlayerID)),
+		fmt.Sprintf("玩家[%+v] ", c.Sprint(g.UserName)),
+		fmt.Sprintf("状态[%+v] ", c.Sprint(g.ConnectStatus)),
+		fmt.Sprintf("会话[%+v] ", c.Sprint(utils.CompressUuid(g.SessionID))),
+		fmt.Sprintf("房间[%+v] ", c.Sprint(utils.CompressUuid(g.TableID))),
+		fmt.Sprintf("玩家[%+v] ", c.Sprint(utils.CompressUuid(g.PlayerID))),
 	}
 }
 
 func (g *GameStatus) ShowPlayerInfo() {
-	fmt.Println("============================================================")
+	//black := color.New(color.BgBlack)
+	fmt.Println("\033[40m                                                                                   \033[0m")
 	infoRow := ""
 	for _, info := range g.Info() {
 		infoRow += info
 	}
 	fmt.Println(infoRow)
-	fmt.Println("============================================================")
+	fmt.Println("\033[40m                                                                                   \033[0m")
 }
 
 func (g *GameStatus) AskWhichTurn() (string, error) {

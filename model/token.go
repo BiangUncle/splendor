@@ -3,18 +3,19 @@ package model
 import (
 	"errors"
 	"fmt"
+	"github.com/fatih/color"
 )
 
 const TokenTypeNumber = 6
 
 // todo 后续可配置
 var (
-	EmeraldTokenNumber   = 7
-	DiamondTokenNumber   = 7
-	SapphireTokenNumber  = 7
-	OnyxTokenNumber      = 7
-	RubyTokenNumber      = 7
-	GoldJokerTokenNumber = 5
+	EmeraldTokenNumber   = 7 // 翡翠的
+	DiamondTokenNumber   = 7 // 金刚石
+	SapphireTokenNumber  = 7 // 蓝宝石
+	OnyxTokenNumber      = 7 // 玛瑙
+	RubyTokenNumber      = 7 // 红宝石
+	GoldJokerTokenNumber = 5 // 黄金
 )
 
 const (
@@ -25,6 +26,15 @@ const (
 	TokenIdxRuby
 	TokenIdxGoldJoker
 )
+
+var ColorConfig = map[int]color.Attribute{
+	TokenIdxEmerald:   color.BgGreen,
+	TokenIdxDiamond:   color.BgWhite,
+	TokenIdxSapphire:  color.BgBlue,
+	TokenIdxOnyx:      color.BgBlack,
+	TokenIdxRuby:      color.BgRed,
+	TokenIdxGoldJoker: color.BgYellow,
+}
 
 type Token struct {
 }
@@ -215,4 +225,20 @@ func (s TokenStack) Copy() TokenStack {
 	cpy := make(TokenStack, len(s))
 	copy(cpy, s)
 	return cpy
+}
+
+func (s TokenStack) Color() {
+
+}
+
+func (s TokenStack) Visual() string {
+	info := ""
+	c := color.New()
+
+	for i, v := range s {
+		c.Add(ColorConfig[i])
+		info += fmt.Sprintf("%sx%d ", c.Sprintf(" "), v)
+	}
+
+	return info
 }

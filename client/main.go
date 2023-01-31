@@ -9,6 +9,8 @@ import (
 func Start() {
 	c := ConstructClient()
 
+	hasJoin := false
+
 	g := ConstructGameStatus(c)
 	g.wg.Add(1)
 
@@ -35,6 +37,7 @@ func Start() {
 			g.SessionID = gjson.Get(content, "session_id").String()
 			g.UserName = gjson.Get(content, "username").String()
 
+			hasJoin = true
 			go g.RoutineKeepALive()
 		case 2:
 			content, err := g.Leave()
@@ -113,6 +116,10 @@ func Start() {
 				}
 			}
 		case 0:
+			if !hasJoin {
+				fmt.Println("客户端: ", "退出游戏")
+				return
+			}
 			content, err := g.Leave()
 			if err != nil {
 				fmt.Println(err)

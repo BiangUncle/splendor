@@ -3,6 +3,7 @@ package model
 import (
 	"errors"
 	"fmt"
+	"github.com/fatih/color"
 	"math/rand"
 )
 
@@ -71,4 +72,38 @@ func (s *NobleTilesStack) TakeTopNCard(n int) (NobleTilesStack, error) {
 	ret := (*s)[:n]
 	*s = (*s)[n+1:]
 	return ret, nil
+}
+
+func (n *NobleTile) Visual() string {
+	require := ""
+	p := color.New()
+	typeCount := 0
+
+	for idx, v := range n.Acquires {
+		if v == 0 {
+			continue
+		}
+		typeCount++
+		p.Add(ColorConfig[idx])
+		if idx == TokenIdxOnyx {
+			require += p.Sprintf("%s", color.WhiteString("%d", v))
+		} else {
+			require += p.Sprintf("%d", v)
+		}
+	}
+
+	// 前面补充空格，保持一致
+	for i := 0; i < (4 - typeCount); i++ {
+		require = " " + require
+	}
+
+	return fmt.Sprintf("[%d  %-4s]", n.Prestige, require)
+}
+
+func (s NobleTilesStack) Visual() string {
+	info := ""
+	for _, n := range s {
+		info += n.Visual()
+	}
+	return info
 }
