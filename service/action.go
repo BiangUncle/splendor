@@ -4,26 +4,30 @@ import (
 	"errors"
 	"fmt"
 	"splendor/model"
+	"splendor/utils"
 )
 
 // ActionTakeThreeTokens 执行拿3个不同宝石
-func ActionTakeThreeTokens(p *model.Player, t *model.Table, tokenIdx []int) error {
+func ActionTakeThreeTokens(p *model.Player, t *model.Table, tokenIdx []int) (int, error) {
 	tokenStack, err := t.TokenStack.TakeThreeTokens(tokenIdx)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	p.AddTokens(tokenStack)
-	return nil
+	ret := utils.Max(0, p.Tokens.Count()-model.TokensNumberUpperLimit) // 需要返还多少
+	return ret, nil
 }
 
 // ActionTakeDoubleTokens 执行拿2个相同宝石
-func ActionTakeDoubleTokens(p *model.Player, t *model.Table, tokenIdx int) error {
+func ActionTakeDoubleTokens(p *model.Player, t *model.Table, tokenIdx int) (int, error) {
 	tokenStack, err := t.TokenStack.TakeDoubleTokens(tokenIdx)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	p.AddTokens(tokenStack)
-	return nil
+
+	ret := utils.Max(0, p.Tokens.Count()-model.TokensNumberUpperLimit) // 需要返还多少
+	return ret, nil
 }
 
 // PurchaseDevelopmentCard 玩家购买场上的发展卡
@@ -203,4 +207,22 @@ func ReceiveNoble(p *model.Player, t *model.Table) error {
 // PurchaseDevelopmentCardByTokens 给定tokens来购买发展卡, 给玩家有使用或者不使用金币的权力
 func PurchaseDevelopmentCardByTokens(p *model.Player, t *model.Table, tokens []int, cardIdx int) error {
 	return model.PurchaseDevelopmentCard(p, tokens, t, cardIdx)
+}
+
+// ActionReturnTokens 角色返还多余的宝石
+func ActionReturnTokens(p *model.Player, t *model.Table, tokenIdx []int) error {
+
+	tokens, err := model.IntList2TokenStack(tokenIdx)
+	if err != nil {
+		return err
+	}
+
+	// 扣除角色身上的宝石
+	err = p.Tokens.Minus(tokens)
+	if err != nil {
+		return err
+	}
+	// 将宝石返还给桌台
+	t.TokenStack.Add(tokens)
+	return nil
 }

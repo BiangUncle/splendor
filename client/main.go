@@ -79,10 +79,17 @@ func Start() {
 				fmt.Println(err)
 				break
 			}
-			_, err = g.TakeThreeTokens(tokensString)
+			msg, err := g.TakeThreeTokens(tokensString)
 			if err != nil {
 				fmt.Println(err)
 				break
+			}
+			if msg == "ret" {
+				_, err = g.ReturnTokens(inputString())
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
 			}
 		case 7:
 			if !g.IsOurTurn() {
@@ -93,10 +100,17 @@ func Start() {
 				fmt.Println(err)
 				break
 			}
-			_, err = g.TakeDoubleTokens(utils.ToInt(tokenId))
+			msg, err := g.TakeDoubleTokens(utils.ToInt(tokenId))
 			if err != nil {
 				fmt.Println(err)
 				break
+			}
+			if msg == "ret" {
+				_, err = g.ReturnTokens(inputString())
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
 			}
 		case 0:
 			content, err := g.Leave()

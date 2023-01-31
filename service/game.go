@@ -121,13 +121,15 @@ func TakeThreeTokens(c *gin.Context) {
 		tokens = append(tokens, int(tokensStrings[i]-'0'))
 	}
 
-	err = ActionTakeThreeTokens(player, table, tokens)
+	ret, err := ActionTakeThreeTokens(player, table, tokens)
 	if err != nil {
 		BuildErrorResponse(c, err)
 		return
 	}
 
-	c.String(http.StatusOK, "ok")
+	c.JSON(http.StatusOK, gin.H{
+		"ret": ret,
+	})
 }
 
 func TakeDoubleTokens(c *gin.Context) {
@@ -147,11 +149,42 @@ func TakeDoubleTokens(c *gin.Context) {
 
 	tokenIDString := c.Query("token_id")
 	tokenID := utils.ToInt(tokenIDString)
-	err = ActionTakeDoubleTokens(player, table, tokenID)
+	ret, err := ActionTakeDoubleTokens(player, table, tokenID)
 	if err != nil {
 		BuildErrorResponse(c, err)
 		return
 	}
 
+	c.JSON(http.StatusOK, gin.H{
+		"ret": ret,
+	})
+}
+
+func ReturnTokens(c *gin.Context) {
+	sessionID, err := GetSessionID(c)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	connectStatus := SessionsMap[sessionID]
+	table := model.GetDefaultTable()
+	player, err := model.GetGlobalPlayer(connectStatus.PlayerID)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	tokensStrings := c.Query("tokens")
+	var tokenIdx []int
+	for i := 0; i < len(tokensStrings); i++ {
+		tokenIdx = append(tokenIdx, int(tokensStrings[i]-'0'))
+	}
+
+	err = ActionReturnTokens(player, table, tokenIdx)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
 	c.String(http.StatusOK, "ok")
 }

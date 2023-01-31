@@ -79,14 +79,16 @@ func Action(p *model.Player, t *model.Table, action int) error {
 		if err != nil {
 			return err
 		}
-		return ActionTakeThreeTokens(p, t, tokenIdx)
+		_, err = ActionTakeThreeTokens(p, t, tokenIdx)
+		return err
 	case 2: // 抽两个一样的宝石
 		fmt.Print("请抽取两个相同的宝石: ")
 		tokenId, err := utils.InputInt()
 		if err != nil {
 			return err
 		}
-		return ActionTakeDoubleTokens(p, t, tokenId)
+		_, err = ActionTakeDoubleTokens(p, t, tokenId)
+		return err
 	case 3: // 购买一张发展牌
 		cardIdx, err := utils.InputInt()
 		if err != nil {

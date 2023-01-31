@@ -8,9 +8,9 @@ import (
 )
 
 const HandCardUpperBound = 3
+const TokensNumberUpperLimit = 10
 
 var GlobalPlayer = make(map[string]*Player)
-
 var PlayerLastLoginTime = make(map[string]time.Time)
 
 type Player struct {
@@ -36,10 +36,12 @@ func CreatePlayer() *Player {
 	}
 }
 
+// CreatePlayerID 生成一个玩家ID
 func CreatePlayerID() string {
 	return utils.GetUuidV4()
 }
 
+// JoinNewPlayer 在全局对象里面增加一个玩家
 func JoinNewPlayer() (*Player, string, error) {
 
 	player := CreatePlayer()
@@ -71,6 +73,7 @@ func CheckIfOnline(playerID string) bool {
 	return false
 }
 
+// CheckAllPlayerNetStatus 检查所有玩家的在线状态
 func CheckAllPlayerNetStatus() []*Player {
 	var offlinePlayerIDs []*Player
 
@@ -84,8 +87,11 @@ func CheckAllPlayerNetStatus() []*Player {
 	return offlinePlayerIDs
 }
 
+// ClearOfflinePlayer 清理离线用户
 func ClearOfflinePlayer() {
+	// 检查
 	offlinePlayers := CheckAllPlayerNetStatus()
+	// 清理
 	for _, player := range offlinePlayers {
 		fmt.Printf("清理离线用户: %+v\n", player.Name)
 		DeleteGlobalPlayer(player.PlayerID)
@@ -98,6 +104,7 @@ func DeleteGlobalPlayer(playerID string) {
 	delete(PlayerLastLoginTime, playerID)
 }
 
+// GetGlobalPlayer 根据ID获取玩家对象
 func GetGlobalPlayer(playerID string) (*Player, error) {
 	if player, ok := GlobalPlayer[playerID]; ok {
 		return player, nil
@@ -255,18 +262,6 @@ func (p *Player) ShowPlayerInfo() {
 	fmt.Printf("| Noble:     %+v\n", p.NobleTitles.ShowIdxInfo())
 	fmt.Printf("| Prestige:  %+v\n", p.Prestige)
 	fmt.Printf("|==========================\n")
-}
-
-// ShowPlayerInfoV2 展示信息
-func (p *Player) ShowPlayerInfoV2() {
-
-	infos := p.PlayerInfoString()
-
-	fmt.Printf("|%s%-10s%s\n", "==========", " Player", "==========")
-	for _, info := range infos {
-		fmt.Printf("| %-30s\n", info)
-	}
-	fmt.Printf("|==============================\n")
 }
 
 // PlayerInfoString 玩家的信息

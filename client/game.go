@@ -161,6 +161,7 @@ func (g *GameStatus) IsOurTurn() bool {
 	return true
 }
 
+// IfMyTurn 判断是不是自己的回合
 func (g *GameStatus) IfMyTurn() (bool, error) {
 	content, err := g.AskWhichTurn()
 	if err != nil {
@@ -175,22 +176,57 @@ func (g *GameStatus) IfMyTurn() (bool, error) {
 	return true, nil
 }
 
+// TakeThreeTokens 拿3个宝石
 func (g *GameStatus) TakeThreeTokens(tokensString string) (string, error) {
-	_, err := g.SendRequest("take_three_tokens", map[string]any{
+	resp, err := g.SendRequest("take_three_tokens", map[string]any{
 		"tokens": tokensString,
 	})
 	if err != nil {
 		return "", err
 	}
+	content, err := g.ExtractBodyContent(resp)
+	if err != nil {
+		return "", err
+	}
+	ret := gjson.Get(content, "ret").Int()
+	if ret != 0 {
+		return "ret", nil
+	}
+
 	return "ok", nil
 }
 
+// TakeDoubleTokens 拿两个宝石
 func (g *GameStatus) TakeDoubleTokens(tokenId int) (string, error) {
-	_, err := g.SendRequest("take_double_tokens", map[string]any{
+	resp, err := g.SendRequest("take_double_tokens", map[string]any{
 		"token_id": tokenId,
 	})
 	if err != nil {
 		return "", err
 	}
+
+	content, err := g.ExtractBodyContent(resp)
+	if err != nil {
+		return "", err
+	}
+	ret := gjson.Get(content, "ret").Int()
+	if ret != 0 {
+		return "ret", nil
+	}
+
 	return "ok", nil
+}
+
+// ReturnTokens 返还多余的宝石
+func (g *GameStatus) ReturnTokens(tokensString string) (string, error) {
+
+	_, err := g.SendRequest("return_tokens", map[string]any{
+		"tokens": tokensString,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	return "ok", nil
+
 }

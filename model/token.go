@@ -55,6 +55,22 @@ func CreateEmptyTokenStack() TokenStack {
 	return make(TokenStack, TokenTypeNumber)
 }
 
+// IntList2TokenStack 将int列表转tokenStack
+func IntList2TokenStack(i []int) (TokenStack, error) {
+	selected := make(TokenStack, TokenTypeNumber)
+
+	for _, typ := range i {
+		if typ == -1 {
+			continue
+		}
+		if typ >= TokenTypeNumber || typ < 0 {
+			return nil, errors.New(fmt.Sprintf("invalid token index: %+v", typ))
+		}
+		selected[typ]++
+	}
+	return selected, nil
+}
+
 // takeToken 拿走一定数量的宝石
 func (s TokenStack) takeToken(tokenId int, num int) (TokenStack, error) {
 	// 判断是否拿得到
@@ -183,6 +199,15 @@ func (s TokenStack) MoreThan(tokens TokenStack) bool {
 		}
 	}
 	return true
+}
+
+// Count 计算宝石数量
+func (s TokenStack) Count() int {
+	count := 0
+	for _, n := range s {
+		count += n
+	}
+	return count
 }
 
 // Copy 复制宝石列表

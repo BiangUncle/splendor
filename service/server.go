@@ -172,6 +172,7 @@ func Run() {
 	e.GET("/keep_a_live", KeepALive)
 	e.GET("/take_three_tokens", TakeThreeTokens)
 	e.GET("/take_double_tokens", TakeDoubleTokens)
+	e.GET("/return_tokens", ReturnTokens)
 
 	srv := &http.Server{
 		Addr:    ":8765",
