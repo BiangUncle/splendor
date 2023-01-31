@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-contrib/sessions"
+	"github.com/tidwall/gjson"
 	"io/ioutil"
 	"net/http"
 )
@@ -65,7 +66,7 @@ func (c *Client) Send(req *http.Request) (*http.Response, error) {
 	return resp, nil
 }
 
-func (c *Client) ExtractBodyContent(resp *http.Response) (string, error) {
+func ExtractBodyContent(resp *http.Response) (string, error) {
 	out, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
@@ -80,4 +81,13 @@ func (c *Client) SendRequest(uri string, args map[string]any) (*http.Response, e
 		return nil, err
 	}
 	return c.Send(req)
+}
+
+func CheckRespStatusCode(resp *http.Response) (int, string, error) {
+	content, err := ExtractBodyContent(resp)
+	if err != nil {
+		return 0, "", err
+	}
+	msg := gjson.Get(content, "msg").String()
+	return resp.StatusCode, msg, nil
 }

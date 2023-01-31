@@ -14,6 +14,10 @@ func Start() {
 	g := ConstructGameStatus(c)
 	g.wg.Add(1)
 
+	a := &Action{
+		gs: g,
+	}
+
 	for {
 		g.ShowPlayerInfo()
 		fmt.Print("请选择需要的操作 1.[加入] 2.[离开] 3.[探测] 4.[房间信息] 5.[下一位] 6.[拿三个宝石] 7.[拿两个宝石] 请选择:  ")
@@ -88,9 +92,8 @@ func Start() {
 				break
 			}
 			if msg == "ret" {
-				_, err = g.ReturnTokens(inputString())
+				err := a.SetExitFunc(StringExitFunc).ReturnTokens()
 				if err != nil {
-					fmt.Println(err)
 					break
 				}
 			}
@@ -109,9 +112,8 @@ func Start() {
 				break
 			}
 			if msg == "ret" {
-				_, err = g.ReturnTokens(inputString())
+				err := a.SetExitFunc(StringExitFunc).ReturnTokens()
 				if err != nil {
-					fmt.Println(err)
 					break
 				}
 			}

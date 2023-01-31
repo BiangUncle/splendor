@@ -227,10 +227,6 @@ func (s TokenStack) Copy() TokenStack {
 	return cpy
 }
 
-func (s TokenStack) Color() {
-
-}
-
 func (s TokenStack) Visual() string {
 	info := ""
 	c := color.New()

@@ -62,7 +62,7 @@ func (g *GameStatus) AskWhichTurn() (string, error) {
 		return "", err
 	}
 
-	content, err := g.ExtractBodyContent(resp)
+	content, err := ExtractBodyContent(resp)
 	if err != nil {
 		return "", err
 	}
@@ -77,7 +77,7 @@ func (g *GameStatus) JoinGame() (string, error) {
 
 	g.Cookies = resp.Cookies()
 
-	content, err := g.ExtractBodyContent(resp)
+	content, err := ExtractBodyContent(resp)
 	if err != nil {
 		return "", err
 	}
@@ -91,7 +91,7 @@ func (g *GameStatus) Alive() (string, error) {
 		return "", err
 	}
 
-	content, err := g.ExtractBodyContent(resp)
+	content, err := ExtractBodyContent(resp)
 	if err != nil {
 		return "", err
 	}
@@ -105,7 +105,7 @@ func (g *GameStatus) Leave() (string, error) {
 		return "", err
 	}
 
-	content, err := g.ExtractBodyContent(resp)
+	content, err := ExtractBodyContent(resp)
 	if err != nil {
 		return "", err
 	}
@@ -119,7 +119,7 @@ func (g *GameStatus) TableInfo() (string, error) {
 		return "", err
 	}
 
-	content, err := g.ExtractBodyContent(resp)
+	content, err := ExtractBodyContent(resp)
 	if err != nil {
 		return "", err
 	}
@@ -133,7 +133,7 @@ func (g *GameStatus) NextTurn() (string, error) {
 		return "", err
 	}
 
-	content, err := g.ExtractBodyContent(resp)
+	content, err := ExtractBodyContent(resp)
 	if err != nil {
 		return "", err
 	}
@@ -189,7 +189,7 @@ func (g *GameStatus) TakeThreeTokens(tokensString string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	content, err := g.ExtractBodyContent(resp)
+	content, err := ExtractBodyContent(resp)
 	if err != nil {
 		return "", err
 	}
@@ -210,7 +210,7 @@ func (g *GameStatus) TakeDoubleTokens(tokenId int) (string, error) {
 		return "", err
 	}
 
-	content, err := g.ExtractBodyContent(resp)
+	content, err := ExtractBodyContent(resp)
 	if err != nil {
 		return "", err
 	}
@@ -225,11 +225,18 @@ func (g *GameStatus) TakeDoubleTokens(tokenId int) (string, error) {
 // ReturnTokens 返还多余的宝石
 func (g *GameStatus) ReturnTokens(tokensString string) (string, error) {
 
-	_, err := g.SendRequest("return_tokens", map[string]any{
+	resp, err := g.SendRequest("return_tokens", map[string]any{
 		"tokens": tokensString,
 	})
 	if err != nil {
 		return "", err
+	}
+	code, msg, err := CheckRespStatusCode(resp)
+	if err != nil {
+		return "", err
+	}
+	if code != http.StatusOK {
+		return "", errors.New(msg)
 	}
 
 	return "ok", nil
