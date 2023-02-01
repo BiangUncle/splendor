@@ -30,14 +30,7 @@ func Start() {
 	return
 
 	c = ConstructClient()
-
-	hasJoin := false
-
 	g = ConstructGameStatus(c)
-
-	a := &Action{
-		gs: g,
-	}
 
 	for {
 		g.ShowPlayerInfo()

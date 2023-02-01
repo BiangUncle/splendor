@@ -288,7 +288,7 @@ func LoopAction(action int) func(status *GameStatus) {
 	a := &Action{}
 	return func(g *GameStatus) {
 		a.tryTime = 0
-		for {
+		for a.tryTime < 5 {
 			a.tryTime++
 			err := PreActionMap[action](g)
 			if err == ExitError {
@@ -308,7 +308,7 @@ func LoopActionByFunction(f func(status *GameStatus) error) func(status *GameSta
 	a := &Action{}
 	return func(g *GameStatus) {
 		a.tryTime = 0
-		for {
+		for a.tryTime < 5 {
 			a.tryTime++
 			err := f(g)
 			if err == ExitError {
