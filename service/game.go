@@ -128,8 +128,11 @@ func TakeThreeTokens(c *gin.Context) {
 		return
 	}
 
+	nextPlayer := table.NextTurn()
+
 	c.JSON(http.StatusOK, gin.H{
-		"ret": ret,
+		"ret":              ret,
+		"next_player_name": nextPlayer.Name,
 	})
 }
 
@@ -157,11 +160,15 @@ func TakeDoubleTokens(c *gin.Context) {
 		return
 	}
 
+	nextPlayer := table.NextTurn()
+
 	c.JSON(http.StatusOK, gin.H{
-		"ret": ret,
+		"ret":              ret,
+		"next_player_name": nextPlayer.Name,
 	})
 }
 
+// ReturnTokens 返还多余的宝石
 func ReturnTokens(c *gin.Context) {
 	sessionID, err := GetSessionID(c)
 	if err != nil {

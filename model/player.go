@@ -52,6 +52,7 @@ func JoinNewPlayer() (*Player, string, error) {
 		return nil, "", errors.New(fmt.Sprintf("这个玩家已经已经有了"))
 	}
 	GlobalPlayer[playerID] = player
+	PlayerLastLoginTime[playerID] = time.Now()
 	return player, playerID, nil
 }
 
@@ -255,6 +256,7 @@ func (p *Player) ReceiveNoble(noble *NobleTile) (bool, error) {
 // ShowPlayerInfo 展示信息
 func (p *Player) ShowPlayerInfo() {
 	fmt.Printf("|==========Player==========\n")
+	fmt.Printf("| Name:      %+v\n", p.Name)
 	fmt.Printf("| Token:     %+v\n", p.Tokens)
 	fmt.Printf("| Bonuses:   %+v\n", p.Bonuses)
 	fmt.Printf("| Cards:     %+v\n", p.DevelopmentCards.ShowIdxInfo())

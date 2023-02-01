@@ -96,17 +96,16 @@ func Join(c *gin.Context) {
 
 func Leave(c *gin.Context) {
 
-	session := sessions.Default(c)
-
-	uuid := session.Get("username")
-	if uuid == nil || uuid.(string) == "" {
-		c.String(http.StatusOK, "user has existed")
+	sessionID, err := GetSessionID(c)
+	if err != nil {
+		BuildErrorResponse(c, err)
 		return
 	}
 
-	session.Delete("username")
+	session := SessionsMap[sessionID]
+	model.LeaveDefaultTable(session.PlayerID)
 
-	delete(SessionsMap, uuid.(string))
+	delete(SessionsMap, sessionID)
 
 	c.String(http.StatusOK, "delete session success")
 }
@@ -141,6 +140,7 @@ func GetSessionID(c *gin.Context) (string, error) {
 		result = username.(string)
 		if _, ok := SessionsMap[result]; !ok {
 			result = "no exist"
+			// todo: 需要修改为其他状态码
 			c.JSON(http.StatusOK, gin.H{
 				"result": result,
 			})
@@ -199,7 +199,14 @@ func Run() {
 	stop := make(chan struct{})
 	defer close(stop)
 
-	utils.InputInt()
+	for {
+		s, _ := utils.InputString()
+		if s == "table" {
+			fmt.Println(model.GetDefaultTable().ShowTableInfo())
+			continue
+		}
+		break
+	}
 
 	err := srv.Shutdown(context.Background()) // 关闭服务器
 	if err != nil {
