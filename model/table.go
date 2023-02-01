@@ -3,8 +3,8 @@ package model
 import (
 	"errors"
 	"fmt"
-	"github.com/fatih/color"
 	"splendor/utils"
+	"sync"
 	"time"
 )
 
@@ -16,8 +16,9 @@ var defaultTableID string
 
 // Table 游戏桌面
 type Table struct {
-	Players  []*Player // 玩家
-	GameTime time.Time // 游戏时间
+	Players     []*Player   // 玩家
+	PlayersLock *sync.Mutex // 玩家操作锁
+	GameTime    time.Time   // 游戏时间
 
 	DevelopmentCardStacks    *DevelopmentCardStacks // 发展卡堆
 	RevealedDevelopmentCards *DevelopmentCardStacks // 暴露的发展卡
@@ -60,6 +61,7 @@ func JoinDefaultTable(player *Player) (*Table, string, error) {
 func CreateTable() *Table {
 	table := &Table{
 		Players:                  make([]*Player, 0),
+		PlayersLock:              &sync.Mutex{},
 		GameTime:                 time.Now(),
 		DevelopmentCardStacks:    CreateANewDevelopmentCardStacks(),
 		NobleTilesStack:          CreateANewNobleTilesStack(),
@@ -143,15 +145,6 @@ func (t *Table) AddPlayer(p *Player) {
 		t.CurrentPlayerIdx = 0
 	}
 }
-
-// todo: 增加一个删除用户的操作
-//func (t *Table) RemovePlayer(p *Player) error {
-//	index := t.FindPlayerIdx(p)
-//	if index == -1 {
-//		return nil
-//	}
-//	t.Players = append(t.Players[:index],
-//}
 
 // Shuffle 发牌
 func (t *Table) Shuffle() {
@@ -275,75 +268,13 @@ func (t *Table) RemoveRevealedNoble(idx int) error {
 	return nil
 }
 
-// TableInfoString 玩家的信息
-func (t *Table) TableInfoString() []string {
-	return []string{
-		fmt.Sprintf("%-15s %+v", "Name:", t.Name),
-		fmt.Sprintf("%-15s %+v", "CurPlayer:", t.PlayerTabInfo()),
-		fmt.Sprintf("%-15s %+v", "Token:", t.TokenStack),
-		fmt.Sprintf("%-15s %+v", "DevCard:", t.DevelopmentCardStacks.ShowIdxInfo()),
-		fmt.Sprintf("%-15s %+v", "RevealCards:", t.RevealedDevelopmentCards.ShowIdxInfo()),
-		fmt.Sprintf("%-15s %+v", "Noble:", t.NobleTilesStack.ShowIdxInfo()),
-		fmt.Sprintf("%-15s %+v", "RevealNoble:", t.RevealedNobleTiles.ShowIdxInfo()),
-	}
-}
-
-// ShowInfo 展示信息
-func (t *Table) ShowInfo() {
-	fmt.Printf("|=========Table=========\n")
-	fmt.Printf("| Token: %+v\n", t.TokenStack)
-	fmt.Printf("| DevCard: %+v\n", t.DevelopmentCardStacks.ShowIdxInfo())
-	fmt.Printf("| RevealCards: %+v\n", t.RevealedDevelopmentCards.ShowIdxInfo())
-	fmt.Printf("| Noble: %+v\n", t.NobleTilesStack.ShowIdxInfo())
-	fmt.Printf("| RevealNoble: %+v\n", t.RevealedNobleTiles.ShowIdxInfo())
-	fmt.Printf("|=======================\n")
-}
-
-// ShowTableInfo 展示整场游戏信息
-func (t *Table) ShowTableInfo() string {
-
-	infos := make([][]string, 0)
-
-	ret := ""
-
-	for _, player := range t.Players {
-		infos = append(infos, player.PlayerInfoString())
-	}
-
-	line := ""
-	for j := 0; j < len(infos); j++ {
-		line = line + fmt.Sprintf("%s", "\u001B[40m                                \u001B[0m")
-	}
-
-	left := "\u001B[40m \u001B[0m"
-
-	ret = ret + fmt.Sprintf("%s\n", line)
-
-	if len(infos) > 0 {
-		for i := 0; i < len(infos[0]); i++ {
-			infoRow := ""
-			for j := 0; j < len(infos); j++ {
-				infoRow = infoRow + fmt.Sprintf("%s %-30s", left, infos[j][i])
-			}
-			infoRow = infoRow + "\n"
-			ret = ret + infoRow
-		}
-	}
-
-	ret = ret + fmt.Sprintf("%s\n", line)
-
-	for _, info := range t.TableInfoString() {
-		ret = ret + fmt.Sprintf("%s %s\n", left, info)
-	}
-
-	ret = ret + fmt.Sprintf("%s\n", line)
-
-	return ret
-}
-
 // NextTurn 下一位
 func (t *Table) NextTurn() *Player {
 	n := len(t.Players)
+
+	t.PlayersLock.Lock()
+	defer t.PlayersLock.Unlock()
+
 	t.CurrentPlayer.ShowPlayerInfo()
 	t.CurrentPlayerIdx = (t.CurrentPlayerIdx + 1) % n
 	t.CurrentPlayer = t.Players[t.CurrentPlayerIdx]
@@ -352,6 +283,7 @@ func (t *Table) NextTurn() *Player {
 	return t.CurrentPlayer
 }
 
+// FindPlayerIdx 确认角色在桌面的索引
 func (t *Table) FindPlayerIdx(p *Player) int {
 	ret := -1
 	for idx, player := range t.Players {
@@ -365,72 +297,73 @@ func (t *Table) FindPlayerIdx(p *Player) int {
 // ClearLoginOutPlayer 清楚未在线用户
 func (t *Table) ClearLoginOutPlayer() {
 
-	beforeNum := len(t.Players)
-
-	var onlinePlayers []*Player
+	var offlinePlayers []*Player
 	for _, player := range t.Players {
-		if CheckIfOnline(player.PlayerID) {
-			onlinePlayers = append(onlinePlayers, player)
-		} else {
+		if !CheckIfOnline(player.PlayerID) {
+			offlinePlayers = append(offlinePlayers, player)
 			fmt.Printf("玩家: %+v 已离线\n", player.Name)
 		}
 	}
 
-	if len(onlinePlayers) == beforeNum {
+	if len(offlinePlayers) == 0 {
 		fmt.Println("没人掉线")
 		return
 	}
 
-	beforeCurrentPlayer := t.CurrentPlayer
+	for _, player := range offlinePlayers {
+		t.RemovePlayer(player)
+	}
+}
 
-	t.CurrentPlayer = nil
-	t.CurrentPlayerIdx = -1
-	t.Players = onlinePlayers
+// RemovePlayerByIdx 通过索引删除角色
+func (t *Table) RemovePlayerByIdx(idx int) {
+	if idx < 0 || idx >= len(t.Players) {
+		return
+	}
+	player := t.Players[idx]
+	t.RemovePlayer(player)
+}
+
+// RemovePlayer 桌面移除玩家
+func (t *Table) RemovePlayer(p *Player) {
+	if len(t.Players) == 0 {
+		return
+	}
+	t.PlayersLock.Lock()
+	defer t.PlayersLock.Unlock()
+
+	curPlayer := t.CurrentPlayer
+	if p == curPlayer { // 如果当前玩家为需要删除的玩家，则选择下一个玩家作为当前玩家
+		curPlayer = t.Players[t.NextPlayerIdx()]
+	}
+
+	// 创建后续的玩家
+	var newPlayers []*Player
+	for _, player := range t.Players {
+		if player != p {
+			newPlayers = append(newPlayers, player)
+		}
+	}
+
+	t.Players = newPlayers
+
 	for idx, player := range t.Players {
-		if player == beforeCurrentPlayer {
+		if player == curPlayer {
+			t.CurrentPlayer = player
 			t.CurrentPlayerIdx = idx
+			break
 		}
 	}
 
-	// todo 有BUG，有人最好直接掉线
-	if len(t.Players) > 0 {
-		t.CurrentPlayerIdx = 0
-		t.CurrentPlayer = t.Players[0]
-	}
+	return
 }
 
-func (t *Table) ShowVisualInfo() {
-
-	fmt.Println("\033[40m                                                                \033[0m")
-	fmt.Println(t.TokenStack.Visual())
-	fmt.Printf("[%d] %s\n", len(t.DevelopmentCardStacks.TopStack), t.RevealedDevelopmentCards.TopStack.Visual())
-	fmt.Printf("[%d] %s\n", len(t.DevelopmentCardStacks.MiddleStack), t.RevealedDevelopmentCards.MiddleStack.Visual())
-	fmt.Printf("[%d] %s\n", len(t.DevelopmentCardStacks.BottomStack), t.RevealedDevelopmentCards.BottomStack.Visual())
-	fmt.Println(t.RevealedNobleTiles.Visual())
-	fmt.Println("\033[40m                                                                \033[0m")
-}
-
-func (t *Table) ALLPlayerTabInfo() []string {
-	var players []string
-	for _, p := range t.Players {
-		players = append(players, fmt.Sprintf("|%s|", p.Name))
+// NextPlayerIdx 下一个执行玩家的索引
+func (t *Table) NextPlayerIdx() int {
+	if len(t.Players) == 0 {
+		return -1
 	}
-	return players
-}
-
-func (t *Table) PlayerTabInfo() string {
-	players := t.ALLPlayerTabInfo()
-	if len(players) == 0 {
-		return ""
-	}
-	c := color.New(color.BgMagenta)
-	ret := ""
-	for idx, player := range players {
-		if idx == t.CurrentPlayerIdx {
-			ret += c.Sprint(player)
-		} else {
-			ret += player
-		}
-	}
-	return ret
+	n := len(t.Players)
+	nextPlayerIdx := (t.CurrentPlayerIdx + 1) % n
+	return nextPlayerIdx
 }

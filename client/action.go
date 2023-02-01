@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/tidwall/gjson"
+	"sort"
 	"splendor/utils"
 )
 
@@ -272,6 +273,7 @@ func OptionsInfos() []string {
 	for k, v := range PreActionName {
 		ret = append(ret, fmt.Sprintf("%d. [%s]", k, v))
 	}
+	sort.Strings(ret)
 	return ret
 }
 

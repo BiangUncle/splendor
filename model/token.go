@@ -226,15 +226,3 @@ func (s TokenStack) Copy() TokenStack {
 	copy(cpy, s)
 	return cpy
 }
-
-func (s TokenStack) Visual() string {
-	info := ""
-	c := color.New()
-
-	for i, v := range s {
-		c.Add(ColorConfig[i])
-		info += fmt.Sprintf("%sx%d ", c.Sprintf(" "), v)
-	}
-
-	return info
-}
