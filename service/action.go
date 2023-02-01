@@ -174,36 +174,6 @@ func PurchaseHandCard(p *model.Player, t *model.Table, cardIdx int) error {
 	return nil
 }
 
-// ReceiveNoble 招待贵族
-func ReceiveNoble(p *model.Player, t *model.Table) error {
-
-	for idx, noble := range t.RevealedNobleTiles {
-		// 没有贵族了
-		if noble == nil {
-			continue
-		}
-
-		// 判断是否可以招待贵族
-		ok, err := p.ReceiveNoble(noble)
-		if err != nil {
-			return err
-		}
-		// 无法招待，继续判断
-		if !ok {
-			continue
-		}
-
-		// 移除贵族
-		err = t.RemoveRevealedNoble(idx)
-		if err != nil {
-			return err
-		}
-		break
-	}
-
-	return nil
-}
-
 // ActionReturnTokens 角色返还多余的宝石
 func ActionReturnTokens(p *model.Player, t *model.Table, tokenIdx []int) error {
 

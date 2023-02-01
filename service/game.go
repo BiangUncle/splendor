@@ -241,6 +241,11 @@ func PurchaseDevelopmentCardByTokens(c *gin.Context) {
 		return
 	}
 
+	err = model.ReceiveNoble(player, table)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
 	nextPlayer := table.NextTurn()
 
 	c.JSON(http.StatusOK, gin.H{
@@ -258,6 +263,11 @@ func ReserveDevelopmentCardApi(c *gin.Context) {
 	cardIdx := model.DevelopmentCardIndexTransfer(utils.ToInt(c.Query("card_idx")))
 
 	err = ReserveDevelopmentCard(player, table, cardIdx)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+	err = model.ReceiveNoble(player, table)
 	if err != nil {
 		BuildErrorResponse(c, err)
 		return
@@ -297,6 +307,11 @@ func PurchaseHandCardApi(c *gin.Context) {
 		return
 	}
 
+	err = model.ReceiveNoble(player, table)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
 	nextPlayer := table.NextTurn()
 
 	c.JSON(http.StatusOK, gin.H{

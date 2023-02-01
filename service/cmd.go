@@ -41,7 +41,7 @@ func TurnRound(table *model.Table) error {
 				continue
 			}
 			// 招待贵族
-			err = ReceiveNoble(player, table)
+			err = model.ReceiveNoble(player, table)
 			if err != nil {
 				fmt.Println(err)
 				continue
