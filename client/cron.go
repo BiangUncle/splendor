@@ -17,6 +17,8 @@ func (g *GameCron) Stop() {
 
 func (g *GameStatus) RoutineKeepALive() {
 	t1 := time.Tick(3 * time.Second)
+	g.wg.Add(1)
+
 	for {
 		select {
 		case <-t1:

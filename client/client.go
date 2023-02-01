@@ -66,6 +66,15 @@ func (c *Client) Send(req *http.Request) (*http.Response, error) {
 	return resp, nil
 }
 
+func (c *Client) SendRequest(uri string, args map[string]any) (*http.Response, error) {
+	url := c.ConstructURL(uri, args)
+	req, err := c.ConstructRequest(url, c.Cookies)
+	if err != nil {
+		return nil, err
+	}
+	return c.Send(req)
+}
+
 func ExtractBodyContent(resp *http.Response) (string, error) {
 	out, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -74,13 +83,25 @@ func ExtractBodyContent(resp *http.Response) (string, error) {
 	return string(out), nil
 }
 
-func (c *Client) SendRequest(uri string, args map[string]any) (*http.Response, error) {
+func (c *Client) SendRequestAndGetContent(uri string, args map[string]any) (string, error) {
 	url := c.ConstructURL(uri, args)
 	req, err := c.ConstructRequest(url, c.Cookies)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return c.Send(req)
+	resp, err := c.Send(req)
+	if err != nil {
+		return "", err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return "", BuildErrorResponseError(resp.StatusCode)
+	}
+	content, err := ExtractBodyContent(resp)
+	if err != nil {
+		return "", err
+	}
+
+	return content, nil
 }
 
 func CheckRespStatusCode(resp *http.Response) (int, string, error) {

@@ -16,8 +16,10 @@ type GameStatus struct {
 	TableID       string
 	PlayerID      string
 	UserName      string
+	HasJoin       bool
 	*Client
 	*GameCron
+	ExitFunc func(interface{}) error
 }
 
 func ConstructGameStatus(c *Client) *GameStatus {
@@ -30,6 +32,10 @@ func ConstructGameStatus(c *Client) *GameStatus {
 	}
 
 	return g
+}
+
+func BuildErrorResponseError(code int) error {
+	return errors.New(fmt.Sprintf("错误的返回码: %+v", code))
 }
 
 func (g *GameStatus) Info() []string {
@@ -74,7 +80,14 @@ func (g *GameStatus) JoinGame() (string, error) {
 	resp, err := g.SendRequest("join", map[string]any{
 		"username": "biang",
 	})
+	if err != nil {
+		return "", err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return "", BuildErrorResponseError(resp.StatusCode)
+	}
 
+	// 设置cookies
 	g.Cookies = resp.Cookies()
 
 	content, err := ExtractBodyContent(resp)
@@ -114,12 +127,7 @@ func (g *GameStatus) Leave() (string, error) {
 }
 
 func (g *GameStatus) TableInfo() (string, error) {
-	resp, err := g.SendRequest("table_info", map[string]any{})
-	if err != nil {
-		return "", err
-	}
-
-	content, err := ExtractBodyContent(resp)
+	content, err := g.SendRequestAndGetContent("table_info", map[string]any{})
 	if err != nil {
 		return "", err
 	}
@@ -241,4 +249,18 @@ func (g *GameStatus) ReturnTokens(tokensString string) (string, error) {
 
 	return "ok", nil
 
+}
+
+var ExitError = errors.New("exit error")
+
+func (g *GameStatus) CheckExit(signal interface{}) error {
+	if g.ExitFunc == nil {
+		return nil
+	}
+	return g.ExitFunc(signal)
+}
+
+func (g *GameStatus) SetExitFunc(f func(interface{}) error) *GameStatus {
+	g.ExitFunc = f
+	return g
 }

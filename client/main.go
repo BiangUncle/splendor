@@ -7,12 +7,33 @@ import (
 )
 
 func Start() {
+
+	InitDefaultAction()
+
 	c := ConstructClient()
+	g := ConstructGameStatus(c)
+
+	for {
+		fmt.Println(ShowOptionsInfos())
+		action, err := utils.InputInt()
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		LoopAction(action)(g)
+		if action == 0 {
+			fmt.Println("exit")
+			break
+		}
+	}
+
+	return
+
+	c = ConstructClient()
 
 	hasJoin := false
 
-	g := ConstructGameStatus(c)
-	g.wg.Add(1)
+	g = ConstructGameStatus(c)
 
 	a := &Action{
 		gs: g,
@@ -29,28 +50,6 @@ func Start() {
 		}
 
 		switch action {
-		case 1:
-			content, err := g.JoinGame()
-			if err != nil {
-				fmt.Println(err)
-				break
-			}
-			g.ConnectStatus = gjson.Get(content, "status").String()
-			g.TableID = gjson.Get(content, "table_id").String()
-			g.PlayerID = gjson.Get(content, "player_id").String()
-			g.SessionID = gjson.Get(content, "session_id").String()
-			g.UserName = gjson.Get(content, "username").String()
-
-			hasJoin = true
-			go g.RoutineKeepALive()
-		case 2:
-			content, err := g.Leave()
-			if err != nil {
-				fmt.Println(err)
-				break
-			}
-			fmt.Println(content)
-			g.Stop()
 		case 3:
 			content, err := g.Alive()
 			if err != nil {
@@ -58,14 +57,6 @@ func Start() {
 				break
 			}
 			fmt.Println(content)
-		case 4:
-			content, err := g.TableInfo()
-			if err != nil {
-				fmt.Println(err)
-				break
-			}
-			tableInfo := gjson.Get(content, "tableInfo").String()
-			fmt.Println(tableInfo)
 		case 5:
 			if !g.IsOurTurn() {
 				break
@@ -77,60 +68,6 @@ func Start() {
 			}
 			nextPlayerName := gjson.Get(content, "current_player_name").String()
 			fmt.Println(fmt.Sprintf("下一个是 %+v 操作", nextPlayerName))
-		case 6:
-			if !g.IsOurTurn() {
-				break
-			}
-			tokensString, err := utils.InputString()
-			if err != nil {
-				fmt.Println(err)
-				break
-			}
-			msg, err := g.TakeThreeTokens(tokensString)
-			if err != nil {
-				fmt.Println(err)
-				break
-			}
-			if msg == "ret" {
-				err := a.SetExitFunc(StringExitFunc).ReturnTokens()
-				if err != nil {
-					break
-				}
-			}
-		case 7:
-			if !g.IsOurTurn() {
-				break
-			}
-			tokenId, err := utils.InputString()
-			if err != nil {
-				fmt.Println(err)
-				break
-			}
-			msg, err := g.TakeDoubleTokens(utils.ToInt(tokenId))
-			if err != nil {
-				fmt.Println(err)
-				break
-			}
-			if msg == "ret" {
-				err := a.SetExitFunc(StringExitFunc).ReturnTokens()
-				if err != nil {
-					break
-				}
-			}
-		case 0:
-			if !hasJoin {
-				fmt.Println("客户端: ", "退出游戏")
-				return
-			}
-			content, err := g.Leave()
-			if err != nil {
-				fmt.Println(err)
-			}
-			fmt.Println("客户端: ", "退出游戏")
-			fmt.Println("服务端: ", content)
-			g.Stop()
-			g.wg.Wait()
-			return
 		}
 	}
 }
