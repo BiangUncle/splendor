@@ -197,3 +197,109 @@ func ReturnTokens(c *gin.Context) {
 	}
 	c.String(http.StatusOK, "ok")
 }
+
+func GetCurrentSessionTableAndPlayer(c *gin.Context) (*model.Table, *model.Player, error) {
+	sessionID, err := GetSessionID(c)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return nil, nil, err
+	}
+
+	connectStatus := SessionsMap[sessionID]
+	table := model.GetDefaultTable()
+	player, err := model.GetGlobalPlayer(connectStatus.PlayerID)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return nil, nil, err
+	}
+	return table, player, nil
+}
+
+func PurchaseDevelopmentCardByTokens(c *gin.Context) {
+	table, player, err := GetCurrentSessionTableAndPlayer(c)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	tokensStrings := c.Query("tokens")
+	cardIdx := model.DevelopmentCardIndexTransfer(utils.ToInt(c.Query("card_idx")))
+	var tokens []int
+	for i := 0; i < len(tokensStrings); i++ {
+		tokens = append(tokens, int(tokensStrings[i]-'0'))
+	}
+
+	tokens, err = model.IntList2TokenStack(tokens)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	err = model.PurchaseDevelopmentCard(player, tokens, table, cardIdx)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	nextPlayer := table.NextTurn()
+
+	c.JSON(http.StatusOK, gin.H{
+		"next_player_name": nextPlayer.Name,
+	})
+}
+
+func ReserveDevelopmentCardApi(c *gin.Context) {
+	table, player, err := GetCurrentSessionTableAndPlayer(c)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	cardIdx := model.DevelopmentCardIndexTransfer(utils.ToInt(c.Query("card_idx")))
+
+	err = ReserveDevelopmentCard(player, table, cardIdx)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	nextPlayer := table.NextTurn()
+
+	c.JSON(http.StatusOK, gin.H{
+		"next_player_name": nextPlayer.Name,
+	})
+}
+
+func PurchaseHandCardApi(c *gin.Context) {
+	table, player, err := GetCurrentSessionTableAndPlayer(c)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	tokensStrings := c.Query("tokens")
+	cardIdx := model.DevelopmentCardIndexTransfer(utils.ToInt(c.Query("card_idx")))
+
+	var tokens []int
+	for i := 0; i < len(tokensStrings); i++ {
+		tokens = append(tokens, int(tokensStrings[i]-'0'))
+	}
+
+	tokens, err = model.IntList2TokenStack(tokens)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	err = model.PurchaseHandCard(player, tokens, table, cardIdx)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	nextPlayer := table.NextTurn()
+
+	c.JSON(http.StatusOK, gin.H{
+		"next_player_name": nextPlayer.Name,
+	})
+}

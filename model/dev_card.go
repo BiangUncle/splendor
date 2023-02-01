@@ -55,6 +55,13 @@ func CreateEmptyDevelopmentCardStacks() *DevelopmentCardStacks {
 	}
 }
 
+func DevelopmentCardIndexTransfer(cardIdx int) int {
+	if cardIdx < 10000 {
+		cardIdx += 10000
+	}
+	return cardIdx
+}
+
 // ToTokenStack 发展卡列表转成token列表
 func (s DevelopmentCardStack) ToTokenStack() TokenStack {
 	tokens := make(TokenStack, TokenTypeNumber)

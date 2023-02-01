@@ -173,6 +173,9 @@ func Run() {
 	e.GET("/take_three_tokens", TakeThreeTokens)
 	e.GET("/take_double_tokens", TakeDoubleTokens)
 	e.GET("/return_tokens", ReturnTokens)
+	e.GET("/purchase_card", PurchaseDevelopmentCardByTokens)
+	e.GET("/reserve_card", ReserveDevelopmentCardApi)
+	e.GET("/purchase_hand_card", PurchaseHandCardApi)
 
 	srv := &http.Server{
 		Addr:    ":8765",
@@ -200,7 +203,7 @@ func Run() {
 	defer close(stop)
 
 	for {
-		s, _ := utils.InputString()
+		s, _ := utils.InputString("")
 		if s == "table" {
 			fmt.Println(model.GetDefaultTable().ShowTableInfo())
 			continue

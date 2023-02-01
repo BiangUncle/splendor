@@ -264,3 +264,38 @@ func (g *GameStatus) SetExitFunc(f func(interface{}) error) *GameStatus {
 	g.ExitFunc = f
 	return g
 }
+
+func (g *GameStatus) PurchaseDevelopmentCard(cardIdx int, tokensString string) (string, error) {
+	content, err := g.SendRequestAndGetContent("purchase_card", map[string]any{
+		"tokens":   tokensString,
+		"card_idx": cardIdx,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	return content, nil
+}
+
+func (g *GameStatus) ReserveDevelopmentCard(cardIdx int) (string, error) {
+	content, err := g.SendRequestAndGetContent("reserve_card", map[string]any{
+		"card_idx": cardIdx,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	return content, nil
+}
+
+func (g *GameStatus) PurchaseHandCard(cardIdx int, tokensString string) (string, error) {
+	content, err := g.SendRequestAndGetContent("purchase_hand_card", map[string]any{
+		"tokens":   tokensString,
+		"card_idx": cardIdx,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	return content, nil
+}

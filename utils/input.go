@@ -26,7 +26,8 @@ func InputList() ([]int, error) {
 	return num, nil
 }
 
-func InputInt() (int, error) {
+func InputInt(tips string) (int, error) {
+	fmt.Print(tips, ": ")
 	var i int
 	_, err := fmt.Scanf("%d", &i)
 	if err != nil {
@@ -35,7 +36,8 @@ func InputInt() (int, error) {
 	return i, nil
 }
 
-func InputString() (string, error) {
+func InputString(tips string) (string, error) {
+	fmt.Print(tips, ": ")
 	var s string
 	_, err := fmt.Scanf("%s", &s)
 	if err != nil {

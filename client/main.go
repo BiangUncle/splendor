@@ -15,7 +15,7 @@ func Start() {
 
 	for {
 		fmt.Println(ShowOptionsInfos())
-		action, err := utils.InputInt()
+		action, err := utils.InputInt("")
 		if err != nil {
 			fmt.Println(err)
 			continue
@@ -36,7 +36,7 @@ func Start() {
 		g.ShowPlayerInfo()
 		fmt.Print("请选择需要的操作 1.[加入] 2.[离开] 3.[探测] 4.[房间信息] 5.[下一位] 6.[拿三个宝石] 7.[拿两个宝石] 请选择:  ")
 
-		action, err := utils.InputInt()
+		action, err := utils.InputInt("")
 		if err != nil {
 			fmt.Println(err)
 			break

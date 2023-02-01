@@ -5,8 +5,8 @@ import (
 	"splendor/utils"
 )
 
-func inputString() string {
-	s, err := utils.InputString()
+func inputString(tips string) string {
+	s, err := utils.InputString(tips)
 	if err != nil {
 		fmt.Println(err)
 		return ""
@@ -15,7 +15,7 @@ func inputString() string {
 }
 
 func inputInt() int {
-	i, err := utils.InputInt()
+	i, err := utils.InputInt("")
 	if err != nil {
 		fmt.Println(err)
 		return 0

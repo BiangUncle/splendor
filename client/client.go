@@ -37,7 +37,7 @@ func (c *Client) ConstructURL(uri string, args map[string]any) string {
 	url = url + "?"
 
 	for k, v := range args {
-		url = url + fmt.Sprintf("%+v=%+v?", k, v)
+		url = url + fmt.Sprintf("%+v=%+v&", k, v)
 	}
 
 	url = url[:len(url)-1]

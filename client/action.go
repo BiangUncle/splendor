@@ -13,21 +13,32 @@ var ActionMap = map[int]func() error{
 }
 
 var PreActionMap = map[int]func(status *GameStatus) error{
-	1: JoinGame,
-	4: TableInfo,
-	5: NextTurn,
-	6: TakeThreeTokens,
-	7: TakeDoubleTokens,
-	8: ReturnTokens,
-	0: Leave,
+	1:  JoinGame,
+	4:  TableInfo,
+	5:  NextTurn,
+	6:  TakeThreeTokens,
+	7:  TakeDoubleTokens,
+	8:  ReturnTokens,
+	9:  PurchaseDevelopmentCard,
+	10: ReserveDevelopmentCard,
+	11: PurchaseHandCard,
+	0:  Leave,
 }
 
-var PreActionName = map[int]string{
-	1: "加入游戏",
-	4: "桌面信息",
-	6: "三个宝石",
-	7: "两个宝石",
-	0: "离开",
+var PreActionName = map[int]Option{
+	1:  Option{1, "加入游戏"},
+	4:  Option{4, "桌面信息"},
+	6:  Option{6, "三个宝石"},
+	7:  Option{7, "两个宝石"},
+	9:  Option{9, "购买发展卡"},
+	10: Option{10, "保存发展卡"},
+	11: Option{11, "购买手卡"},
+	0:  Option{0, "离开"},
+}
+
+type Option struct {
+	Index int
+	Name  string
 }
 
 /*
@@ -55,8 +66,7 @@ func InitDefaultAction() {
 func (a *Action) ReturnTokens() error {
 	for {
 		a.tryTime++
-		fmt.Print("请输入要丢弃的宝石: ")
-		tokensString := inputString()
+		tokensString := inputString("请输入要丢弃的宝石")
 
 		if a.CheckExit(tokensString) {
 			return InvalidExitError
@@ -123,7 +133,7 @@ func (a *Action) LoopAction(f func() error) {
 }
 
 func (a *Action) TestAction() error {
-	i, err := utils.InputInt()
+	i, err := utils.InputInt("")
 	if err != nil {
 		return err
 	}
@@ -207,7 +217,7 @@ func TakeThreeTokens(g *GameStatus) error {
 		fmt.Println("当前不是你的回合")
 		return nil
 	}
-	tokensString, err := utils.InputString()
+	tokensString, err := utils.InputString("")
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -232,7 +242,7 @@ func TakeDoubleTokens(g *GameStatus) error {
 		fmt.Println("当前不是你的回合")
 		return nil
 	}
-	tokenId, err := utils.InputString()
+	tokenId, err := utils.InputString("")
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -253,8 +263,7 @@ func TakeDoubleTokens(g *GameStatus) error {
 }
 
 func ReturnTokens(g *GameStatus) error {
-	fmt.Print("请输入要丢弃的宝石: ")
-	tokensString := inputString()
+	tokensString := inputString("请输入要丢弃的宝石")
 
 	if err := g.CheckExit(tokensString); err != nil {
 		return err
@@ -270,10 +279,18 @@ func ReturnTokens(g *GameStatus) error {
 
 func OptionsInfos() []string {
 	var ret []string
-	for k, v := range PreActionName {
-		ret = append(ret, fmt.Sprintf("%d. [%s]", k, v))
+	var options []Option
+	for _, v := range PreActionName {
+		options = append(options, v)
 	}
-	sort.Strings(ret)
+
+	sort.Slice(options, func(i, j int) bool {
+		return options[i].Index < options[j].Index
+	})
+	for _, op := range options {
+		ret = append(ret, fmt.Sprintf("%d. [%s]", op.Index, op.Name))
+	}
+
 	return ret
 }
 
@@ -324,4 +341,96 @@ func LoopActionByFunction(f func(status *GameStatus) error) func(status *GameSta
 			return
 		}
 	}
+}
+
+func PurchaseDevelopmentCard(g *GameStatus) error {
+	if !g.IsOurTurn() {
+		fmt.Println("当前不是你的回合")
+		return nil
+	}
+	tokensString, err := utils.InputString("请输入你支出的宝石")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	// 确认是否强行退出
+	if err = g.CheckExit(tokensString); err != nil {
+		return err
+	}
+	cardIdx, err := utils.InputInt("请输入你购买的卡ID")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	// 确认是否强行退出
+	if cardIdx == -1 {
+		return ExitError
+	}
+
+	_, err = g.PurchaseDevelopmentCard(cardIdx, tokensString)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	return nil
+}
+
+func ReserveDevelopmentCard(g *GameStatus) error {
+	if !g.IsOurTurn() {
+		fmt.Println("当前不是你的回合")
+		return nil
+	}
+
+	cardIdx, err := utils.InputInt("请输入你购买的卡ID")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	// 确认是否强行退出
+	if cardIdx == -1 {
+		return ExitError
+	}
+
+	_, err = g.ReserveDevelopmentCard(cardIdx)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	return nil
+}
+
+func PurchaseHandCard(g *GameStatus) error {
+	if !g.IsOurTurn() {
+		fmt.Println("当前不是你的回合")
+		return nil
+	}
+
+	tokensString, err := utils.InputString("请输入你支出的宝石")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	// 确认是否强行退出
+	if err = g.CheckExit(tokensString); err != nil {
+		return err
+	}
+	cardIdx, err := utils.InputInt("请输入你购买的卡ID")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	// 确认是否强行退出
+	if cardIdx == -1 {
+		return ExitError
+	}
+
+	_, err = g.PurchaseHandCard(cardIdx, tokensString)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	return nil
 }
