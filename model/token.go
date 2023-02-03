@@ -31,7 +31,7 @@ var ColorConfig = map[int]color.Attribute{
 	TokenIdxEmerald:   color.BgGreen,
 	TokenIdxDiamond:   color.BgWhite,
 	TokenIdxSapphire:  color.BgBlue,
-	TokenIdxOnyx:      color.BgBlack,
+	TokenIdxOnyx:      color.BgHiMagenta,
 	TokenIdxRuby:      color.BgRed,
 	TokenIdxGoldJoker: color.BgYellow,
 }

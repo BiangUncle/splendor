@@ -27,3 +27,8 @@ func (p *Player) PlayerInfoString() []string {
 		fmt.Sprintf("%-10s %+v", "Prestige:", p.Prestige),
 	}
 }
+
+//func (p *Player) WholeVisual() []string {
+//	 var ret []string
+//
+//}

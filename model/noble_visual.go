@@ -15,7 +15,7 @@ func (s NobleTilesStack) ShowIdxInfo() string {
 			idxInfo[i] = noble.Idx % 100
 		}
 	}
-	//fmt.Printf("%+v\n", idxInfo)
+
 	return fmt.Sprintf("%+v", idxInfo)
 }
 
@@ -30,11 +30,12 @@ func (n *NobleTile) Visual() string {
 		}
 		typeCount++
 		p.Add(ColorConfig[idx])
-		if idx == TokenIdxOnyx {
-			require += p.Sprintf("%s", color.WhiteString("%d", v))
-		} else {
-			require += p.Sprintf("%d", v)
-		}
+		require += p.Sprintf("%d", v)
+		//if idx == TokenIdxOnyx {
+		//	require += p.Sprintf("%s", color.WhiteString("%d", v))
+		//} else {
+		//	require += p.Sprintf("%d", v)
+		//}
 	}
 
 	// 前面补充空格，保持一致
@@ -55,4 +56,43 @@ func (s NobleTilesStack) Visual() string {
 		}
 	}
 	return info
+}
+
+func (n *NobleTile) WholeCard() []string {
+
+	require := ""
+	p := color.New()
+	typeCount := 0
+
+	for idx, v := range n.Acquires {
+		if idx == 5 {
+			continue
+		}
+		typeCount++
+		p.Add(ColorConfig[idx])
+		require += p.Sprintf("%d", v)
+	}
+
+	var ret []string
+	ret = append(ret, "+-----+")
+	ret = append(ret, fmt.Sprintf("|%s|", p.Sprintf("%-2d  %d", n.Idx%10000, n.Prestige)))
+	ret = append(ret, fmt.Sprintf("|%s|", require))
+	ret = append(ret, "+-----+")
+
+	return ret
+}
+
+func (s NobleTilesStack) WholeCard() []string {
+	ret := make([]string, 4)
+	for i := 0; i < 4; i++ {
+		ret[i] = ""
+	}
+
+	for _, c := range s {
+		wv := c.WholeCard()
+		for idx, str := range wv {
+			ret[idx] = ret[idx] + str
+		}
+	}
+	return ret
 }

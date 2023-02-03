@@ -122,3 +122,49 @@ func (t *Table) Unmarshal(s string) error {
 	}
 	return nil
 }
+
+func (t *Table) WholeVisual() []string {
+	var ret []string
+	ret = append(ret, t.RevealedDevelopmentCards.TopStack.WholeCard()...)
+	ret = append(ret, t.RevealedDevelopmentCards.MiddleStack.WholeCard()[1:]...)
+	ret = append(ret, t.RevealedDevelopmentCards.BottomStack.WholeCard()[1:]...)
+
+	idx := 0
+	ret[0] = ret[0] + "+----------------"
+
+	for idx = 2; idx <= 10; idx++ {
+		ret[idx] = ret[idx] + " "
+	}
+
+	idx = 2
+
+	for _, s := range t.TokenStack.WholeVisual() {
+		ret[idx] = ret[idx] + s
+		idx++
+	}
+	ret[10] = ret[10] + "+----------------"
+
+	for idx = 11; idx <= 14; idx++ {
+		ret[idx] = ret[idx] + " "
+	}
+
+	idx = 11
+
+	for _, s := range t.RevealedNobleTiles.WholeCard() {
+		ret[idx] = ret[idx] + s
+		idx++
+	}
+
+	ret[15] = ret[15] + "+----------------"
+
+	return ret
+}
+
+func (t *Table) WholeVisualPrint() string {
+	s := t.WholeVisual()
+	var ret string
+	for _, str := range s {
+		ret += str + "\n"
+	}
+	return ret
+}

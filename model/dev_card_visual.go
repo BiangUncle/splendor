@@ -35,11 +35,12 @@ func (c *DevelopmentCard) Visual() string {
 		}
 		typeCount++
 		p.Add(ColorConfig[idx])
-		if idx == TokenIdxOnyx {
-			require += p.Sprintf("%s", color.WhiteString("%d", v))
-		} else {
-			require += p.Sprintf("%d", v)
-		}
+		require += p.Sprintf("%d", v)
+		//if idx == TokenIdxOnyx {
+		//	require += p.Sprintf("%s", color.WhiteString("%d", v))
+		//} else {
+		//	require += p.Sprintf("%d", v)
+		//}
 	}
 
 	// 前面补充空格，保持一致
@@ -82,4 +83,59 @@ func (s DevelopmentCardStacks) Visual() string {
 	info += s.MiddleStack.Visual() + "\n"
 	info += s.BottomStack.Visual()
 	return info
+}
+
+/*
++-----+
+|12  2|
+|     |
+|     |
+|02111|
++-----+
+*/
+
+func (c *DevelopmentCard) WholeCard() []string {
+
+	bonusC := color.New(ColorConfig[c.BonusType])
+
+	require := ""
+	p := color.New()
+	typeCount := 0
+
+	for idx, v := range c.Acquires {
+		if idx == 5 {
+			continue
+		}
+		typeCount++
+		p.Add(ColorConfig[idx])
+		require += p.Sprintf("%d", v)
+	}
+
+	p = color.New(ColorConfig[c.BonusType])
+
+	var ret []string
+	ret = append(ret, "+-----+")
+	ret = append(ret, fmt.Sprintf("|%s|", p.Sprintf("%-2d  %s", c.Idx%10000, bonusC.Sprintf("%d", c.Prestige))))
+	ret = append(ret, fmt.Sprintf("|%s|", p.Sprint("     ")))
+	ret = append(ret, fmt.Sprintf("|%s|", p.Sprint("     ")))
+	ret = append(ret, fmt.Sprintf("|%s|", require))
+	ret = append(ret, "+-----+")
+
+	return ret
+}
+
+func (s DevelopmentCardStack) WholeCard() []string {
+	ret := make([]string, 6)
+	for i := 0; i < 6; i++ {
+		ret[i] = ""
+	}
+
+	for _, c := range s {
+		wv := c.WholeCard()
+		for idx, str := range wv {
+			ret[idx] = ret[idx] + str
+		}
+	}
+
+	return ret
 }

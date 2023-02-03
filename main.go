@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"splendor/model"
 	"splendor/service"
 )
@@ -24,8 +25,18 @@ func TableVisual() {
 	table.ShowVisualInfo()
 }
 
+func Whole() {
+	ds := model.CreateTable()
+	ds.Reveal()
+
+	for _, s := range ds.WholeVisual() {
+		fmt.Println(s)
+	}
+}
+
 func main() {
 	//NewGame()
-	RunServer()
+	//RunServer()
 	//TableVisual()
+	Whole()
 }
