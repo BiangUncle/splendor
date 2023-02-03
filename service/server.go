@@ -1,34 +1,5 @@
 package service
 
-import (
-	"context"
-	"errors"
-	"fmt"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
-	"github.com/gin-gonic/gin"
-	"net/http"
-	"splendor/model"
-	"splendor/utils"
-	"sync"
-	"time"
-)
-
-type ConnectStatus struct {
-	CreateTime time.Time // 连接创建时间
-	TableID    string    // 桌台ID
-	PlayerID   string    // 玩家ID
-}
-
-func (c *ConnectStatus) Info() string {
-	info := ""
-	info = info + fmt.Sprintf("CreateTime: %+v\n", c.CreateTime)
-	info = info + fmt.Sprintf("TableID: %+v\n", c.TableID)
-	return info
-}
-
-var SessionsMap = make(map[string]*ConnectStatus)
-
 /*
 有空看看 https://blog.csdn.net/qq_43716830/article/details/124431938
 
@@ -36,172 +7,85 @@ var SessionsMap = make(map[string]*ConnectStatus)
 https://github.com/name5566/leaf/blob/master/TUTORIAL_ZH.md
 */
 
-func BuildErrorResponse(c *gin.Context, err error) {
-	c.JSON(http.StatusInternalServerError, gin.H{
-		"msg": err.Error(),
-	})
+import (
+	"context"
+	"fmt"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-gonic/gin"
+	"net/http"
+	"splendor/consts"
+	"splendor/model"
+	"splendor/utils"
+	"time"
+)
+
+var SessionsMap = make(map[string]*ConnectStatus)
+
+// ConnectStatus 连接状态
+type ConnectStatus struct {
+	CreateTime time.Time // 连接创建时间
+	TableID    string    // 桌台ID
+	PlayerID   string    // 玩家ID
 }
 
-func Ping(c *gin.Context) {
-	c.String(http.StatusOK, "Pong")
+// Info 连接状态展示
+func (c *ConnectStatus) Info() string {
+	info := ""
+	info = info + fmt.Sprintf("CreateTime: %+v\n", c.CreateTime)
+	info = info + fmt.Sprintf("TableID: %+v\n", c.TableID)
+	return info
 }
 
-func Join(c *gin.Context) {
+// InitHandler 初始化handler
+func InitHandler(e *gin.Engine) *gin.Engine {
+	e.GET(_addSlash(consts.Ping), Ping)
+	e.GET(_addSlash(consts.Join), Join)
+	e.GET(_addSlash(consts.Leave), Leave)
+	e.GET(_addSlash(consts.Alive), Alive)
+	e.GET(_addSlash(consts.TableInfo), TableInfo)
+	e.GET(_addSlash(consts.AskWhichTurn), AskWhichTurn)
+	e.GET(_addSlash(consts.NextTurn), NextTurn)
+	e.GET(_addSlash(consts.KeepALive), KeepALive)
+	e.GET(_addSlash(consts.TakeThreeTokens), TakeThreeTokens)
+	e.GET(_addSlash(consts.TakeDoubleTokens), TakeDoubleTokens)
+	e.GET(_addSlash(consts.ReturnTokens), ReturnTokens)
+	e.GET(_addSlash(consts.PurchaseDevelopmentCardByTokens), PurchaseDevelopmentCardByTokens)
+	e.GET(_addSlash(consts.ReserveDevelopmentCardApi), ReserveDevelopmentCard)
+	e.GET(_addSlash(consts.PurchaseHandCardApi), PurchaseHandCard)
+	return e
+}
 
-	// 获取用户名
-	username := c.Query("username")
-	_ = username
-	session := sessions.Default(c)
+// RunServer 运行服务器
+func RunServer(c *OneCron, srv *http.Server) {
+	c.wg.Add(1)
+	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+		fmt.Println(err)
+	}
+	fmt.Println("服务端: ", "程序退出")
+	c.wg.Done()
+}
 
-	uuid := utils.GetUuidV1()
+// RunCron 运行守护线程
+func RunCron(c *OneCron) {
+	c.wg.Add(1)
+	c.Run()
+	c.wg.Done()
+}
 
-	session.Set("username", uuid)
-
-	err := session.Save()
+// ShutDown 关闭服务
+func ShutDown(c *OneCron, srv *http.Server) {
+	err := srv.Shutdown(context.Background()) // 关闭服务器
 	if err != nil {
-		BuildErrorResponse(c, err)
-		return
+		fmt.Println(err)
 	}
-
-	player, playerID, err := model.JoinNewPlayer()
-	if err != nil {
-		BuildErrorResponse(c, err)
-		return
-	}
-
-	_, tableID, err := model.JoinDefaultTable(player)
-	if err != nil {
-		BuildErrorResponse(c, err)
-		return
-	}
-
-	SessionsMap[uuid] = &ConnectStatus{
-		CreateTime: time.Now(),
-		TableID:    tableID,
-		PlayerID:   playerID,
-	}
-
-	fmt.Println(SessionsMap[uuid].Info())
-
-	c.JSON(http.StatusOK, gin.H{
-		"status":     "created",
-		"username":   player.Name,
-		"msg":        "set session success",
-		"player_num": 1,
-		"table_id":   tableID,
-		"player_id":  playerID,
-		"session_id": uuid,
-	})
+	c.Stop() // 关闭清理线程
+	fmt.Println("服务端: ", "等待其他协程退出")
+	c.wg.Wait()
 }
 
-func Leave(c *gin.Context) {
-
-	sessionID, err := GetSessionID(c)
-	if err != nil {
-		BuildErrorResponse(c, err)
-		return
-	}
-
-	session := SessionsMap[sessionID]
-	model.LeaveDefaultTable(session.PlayerID)
-
-	delete(SessionsMap, sessionID)
-
-	c.String(http.StatusOK, "delete session success")
-}
-
-func Alive(c *gin.Context) {
-	session := sessions.Default(c)
-
-	username := session.Get("username")
-	var result string
-
-	if username != nil && username != "" {
-		result = username.(string)
-		if _, ok := SessionsMap[result]; !ok {
-			result = "no exist"
-		}
-	} else {
-		result = "no exist"
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"result": result,
-	})
-}
-
-func GetSessionID(c *gin.Context) (string, error) {
-	session := sessions.Default(c)
-
-	username := session.Get("username")
-	var result string
-
-	if username != nil && username != "" {
-		result = username.(string)
-		if _, ok := SessionsMap[result]; !ok {
-			result = "no exist"
-			// todo: 需要修改为其他状态码
-			c.JSON(http.StatusOK, gin.H{
-				"result": result,
-			})
-			return result, errors.New("no sessionID")
-		}
-	} else {
-		result = "no exist"
-		c.JSON(http.StatusOK, gin.H{
-			"result": result,
-		})
-		return result, errors.New("no sessionID")
-	}
-
-	return result, nil
-}
-
-// Run 运行服务端
-func Run() {
-	e := gin.Default()
-	store := cookie.NewStore([]byte("secret"))
-	e.Use(sessions.Sessions("SessionID", store))
-	e.GET("/ping", Ping)
-	e.GET("/join", Join)
-	e.GET("/leave", Leave)
-	e.GET("/alive", Alive, KeepALive)
-	e.GET("/table_info", TableInfo)
-	e.GET("/cur_player", AskWhichTurn)
-	e.GET("/next_turn", NextTurn)
-	e.GET("/keep_a_live", KeepALive)
-	e.GET("/take_three_tokens", TakeThreeTokens)
-	e.GET("/take_double_tokens", TakeDoubleTokens)
-	e.GET("/return_tokens", ReturnTokens)
-	e.GET("/purchase_card", PurchaseDevelopmentCardByTokens)
-	e.GET("/reserve_card", ReserveDevelopmentCardApi)
-	e.GET("/purchase_hand_card", PurchaseHandCardApi)
-
-	srv := &http.Server{
-		Addr:    ":8765",
-		Handler: e,
-	}
-	c := &OneCron{
-		stop: make(chan struct{}),
-	}
-	wg := &sync.WaitGroup{}
-	wg.Add(2)
-
-	go func() {
-		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
-			fmt.Println(err)
-		}
-		fmt.Println("服务端: ", "程序退出")
-		wg.Done()
-	}()
-	go func() {
-		c.Run()
-		wg.Done()
-	}()
-
-	stop := make(chan struct{})
-	defer close(stop)
-
+// Input 服务器接受输入
+func Input() {
 	for {
 		s, _ := utils.InputString("")
 		if s == "table" {
@@ -210,13 +94,38 @@ func Run() {
 		}
 		break
 	}
+}
 
-	err := srv.Shutdown(context.Background()) // 关闭服务器
-	if err != nil {
-		fmt.Println(err)
+func SetSession(e *gin.Engine) *gin.Engine {
+	store := cookie.NewStore([]byte("secret"))
+	e.Use(sessions.Sessions("SessionID", store))
+	return e
+}
+
+func NewServer(addr string, h http.Handler) *http.Server {
+	return &http.Server{
+		Addr:    ":8765",
+		Handler: h,
 	}
-	c.Stop() // 关闭清理线程
-	fmt.Println("服务端: ", "等待其他协程退出")
-	wg.Wait()
+}
+
+// Run 启动!
+func Run() {
+	e := gin.Default()
+	e = SetSession(e)
+	e = InitHandler(e)
+
+	srv := NewServer(":8765", e)
+	c := ConstructCron()
+
+	go RunServer(c, srv)
+	go RunCron(c)
+
+	stop := make(chan struct{})
+	defer close(stop)
+
+	Input()
+
+	ShutDown(c, srv)
 
 }

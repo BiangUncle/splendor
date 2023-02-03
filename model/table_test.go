@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -20,5 +21,27 @@ func TestTable_ShowTableInfo(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	table.ShowTableInfo()
+	fmt.Println(table.ShowTableInfo())
+}
+
+func TestTable_Status(t *testing.T) {
+	table := CreateTable()
+	player := CreatePlayer()
+	table.AddPlayer(player)
+	table.Reveal()
+
+	s, err := table.Status()
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(s)
+
+	newTable := CreateTable()
+	err = newTable.LoadStatus(s)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	table.ShowVisualInfo()
+	newTable.ShowVisualInfo()
 }

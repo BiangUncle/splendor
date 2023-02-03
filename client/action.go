@@ -217,7 +217,7 @@ func TakeThreeTokens(g *GameStatus) error {
 		fmt.Println("当前不是你的回合")
 		return nil
 	}
-	tokensString, err := utils.InputString("")
+	tokensString, err := utils.InputString("选择你要拿取的宝石编号")
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -242,7 +242,7 @@ func TakeDoubleTokens(g *GameStatus) error {
 		fmt.Println("当前不是你的回合")
 		return nil
 	}
-	tokenId, err := utils.InputString("")
+	tokenId, err := utils.InputString("选择你要拿取的宝石编号")
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -363,8 +363,8 @@ func PurchaseDevelopmentCard(g *GameStatus) error {
 		return err
 	}
 	// 确认是否强行退出
-	if cardIdx == -1 {
-		return ExitError
+	if err = g.CheckExit(cardIdx); err != nil {
+		return err
 	}
 
 	_, err = g.PurchaseDevelopmentCard(cardIdx, tokensString)
@@ -388,8 +388,8 @@ func ReserveDevelopmentCard(g *GameStatus) error {
 		return err
 	}
 	// 确认是否强行退出
-	if cardIdx == -1 {
-		return ExitError
+	if err = g.CheckExit(cardIdx); err != nil {
+		return err
 	}
 
 	_, err = g.ReserveDevelopmentCard(cardIdx)
@@ -422,8 +422,8 @@ func PurchaseHandCard(g *GameStatus) error {
 		return err
 	}
 	// 确认是否强行退出
-	if cardIdx == -1 {
-		return ExitError
+	if err = g.CheckExit(cardIdx); err != nil {
+		return err
 	}
 
 	_, err = g.PurchaseHandCard(cardIdx, tokensString)

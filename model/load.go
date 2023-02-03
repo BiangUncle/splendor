@@ -105,6 +105,7 @@ func LoadDefaultNobleTiles() error {
 		}
 
 		defaultNobleTilesStack = append(defaultNobleTilesStack, noble)
+		NobleTilesMap[noble.Idx] = noble
 	}
 
 	return nil

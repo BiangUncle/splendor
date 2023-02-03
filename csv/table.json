@@ -1,0 +1,403 @@
+{
+  "players": [
+    {
+      "name": "",
+      "tokens": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bonuses": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "development_cards": [],
+      "hand_cards": [],
+      "noble_titles": [],
+      "prestige": 0,
+      "player_id": ""
+    }
+  ],
+  "players_lock": {},
+  "game_time": "2023-02-03T08:55:30.778887+08:00",
+  "development_card_stacks": {
+    "TopStack": [
+      {
+        "Idx": 10014,
+        "Level": 1,
+        "BonusType": 1,
+        "Prestige": 1,
+        "Acquires": [
+          0,
+          2,
+          0,
+          2,
+          0,
+          0
+        ]
+      }
+    ],
+    "MiddleStack": [
+      {
+        "Idx": 10013,
+        "Level": 2,
+        "BonusType": 1,
+        "Prestige": 1,
+        "Acquires": [
+          0,
+          2,
+          0,
+          2,
+          0,
+          0
+        ]
+      }
+    ],
+    "BottomStack": [
+      {
+        "Idx": 10015,
+        "Level": 3,
+        "BonusType": 1,
+        "Prestige": 1,
+        "Acquires": [
+          0,
+          2,
+          0,
+          2,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  "revealed_development_cards": {
+    "TopStack": [
+      {
+        "Idx": 10002,
+        "Level": 1,
+        "BonusType": 1,
+        "Prestige": 3,
+        "Acquires": [
+          0,
+          2,
+          0,
+          2,
+          0,
+          0
+        ]
+      },
+      {
+        "Idx": 10005,
+        "Level": 1,
+        "BonusType": 1,
+        "Prestige": 1,
+        "Acquires": [
+          0,
+          2,
+          0,
+          2,
+          0,
+          0
+        ]
+      },
+      {
+        "Idx": 10008,
+        "Level": 1,
+        "BonusType": 1,
+        "Prestige": 1,
+        "Acquires": [
+          1,
+          2,
+          0,
+          2,
+          0,
+          0
+        ]
+      },
+      {
+        "Idx": 10011,
+        "Level": 1,
+        "BonusType": 1,
+        "Prestige": 1,
+        "Acquires": [
+          0,
+          2,
+          0,
+          2,
+          0,
+          0
+        ]
+      }
+    ],
+    "MiddleStack": [
+      {
+        "Idx": 10001,
+        "Level": 2,
+        "BonusType": 1,
+        "Prestige": 2,
+        "Acquires": [
+          0,
+          2,
+          0,
+          2,
+          1,
+          0
+        ]
+      },
+      {
+        "Idx": 10004,
+        "Level": 2,
+        "BonusType": 1,
+        "Prestige": 1,
+        "Acquires": [
+          0,
+          2,
+          1,
+          2,
+          0,
+          0
+        ]
+      },
+      {
+        "Idx": 10007,
+        "Level": 2,
+        "BonusType": 1,
+        "Prestige": 1,
+        "Acquires": [
+          0,
+          2,
+          0,
+          2,
+          0,
+          0
+        ]
+      },
+      {
+        "Idx": 10010,
+        "Level": 2,
+        "BonusType": 1,
+        "Prestige": 1,
+        "Acquires": [
+          0,
+          2,
+          0,
+          2,
+          0,
+          0
+        ]
+      }
+    ],
+    "BottomStack": [
+      {
+        "Idx": 10003,
+        "Level": 3,
+        "BonusType": 1,
+        "Prestige": 1,
+        "Acquires": [
+          0,
+          2,
+          0,
+          2,
+          0,
+          0
+        ]
+      },
+      {
+        "Idx": 10006,
+        "Level": 3,
+        "BonusType": 1,
+        "Prestige": 1,
+        "Acquires": [
+          0,
+          2,
+          0,
+          2,
+          0,
+          0
+        ]
+      },
+      {
+        "Idx": 10009,
+        "Level": 3,
+        "BonusType": 1,
+        "Prestige": 1,
+        "Acquires": [
+          0,
+          2,
+          0,
+          2,
+          0,
+          0
+        ]
+      },
+      {
+        "Idx": 10012,
+        "Level": 3,
+        "BonusType": 1,
+        "Prestige": 1,
+        "Acquires": [
+          0,
+          2,
+          0,
+          2,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  "noble_tiles_stack": [
+    {
+      "Idx": 20004,
+      "Prestige": 3,
+      "Acquires": [
+        1,
+        1,
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "Idx": 20005,
+      "Prestige": 3,
+      "Acquires": [
+        2,
+        2,
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "Idx": 20006,
+      "Prestige": 3,
+      "Acquires": [
+        0,
+        2,
+        0,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "Idx": 20007,
+      "Prestige": 3,
+      "Acquires": [
+        0,
+        2,
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "Idx": 20008,
+      "Prestige": 3,
+      "Acquires": [
+        1,
+        1,
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "Idx": 20009,
+      "Prestige": 3,
+      "Acquires": [
+        2,
+        2,
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "Idx": 20010,
+      "Prestige": 3,
+      "Acquires": [
+        0,
+        2,
+        0,
+        2,
+        2,
+        0
+      ]
+    }
+  ],
+  "revealed_noble_tiles": [
+    {
+      "Idx": 20001,
+      "Prestige": 3,
+      "Acquires": [
+        0,
+        2,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Idx": 20002,
+      "Prestige": 3,
+      "Acquires": [
+        0,
+        2,
+        0,
+        2,
+        2,
+        0
+      ]
+    }
+  ],
+  "token_stack": [
+    7,
+    7,
+    7,
+    7,
+    7,
+    5
+  ],
+  "current_player": {
+    "name": "",
+    "tokens": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "bonuses": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "development_cards": [],
+    "hand_cards": [],
+    "noble_titles": [],
+    "prestige": 0,
+    "player_id": ""
+  },
+  "current_player_idx": 0,
+  "table_id": "",
+  "name": ""
+}

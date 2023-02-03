@@ -15,6 +15,7 @@ type NobleTile struct {
 }
 
 var defaultNobleTilesStack NobleTilesStack
+var NobleTilesMap = make(map[int]*NobleTile, 0)
 
 type NobleTilesStack []*NobleTile
 
@@ -57,4 +58,28 @@ func (s *NobleTilesStack) TakeTopNCard(n int) (NobleTilesStack, error) {
 	ret := (*s)[:n]
 	*s = (*s)[n+1:]
 	return ret, nil
+}
+
+func (s NobleTilesStack) Status() []int {
+	var ret []int
+	for _, c := range s {
+		if c == nil {
+			ret = append(ret, 0)
+		} else {
+			ret = append(ret, c.Idx)
+		}
+	}
+	return ret
+}
+
+func (s *NobleTilesStack) LoadStatus(status []int) error {
+	*s = make(NobleTilesStack, len(status))
+	for i, idx := range status {
+		if _, ok := NobleTilesMap[idx]; ok {
+			(*s)[i] = NobleTilesMap[idx]
+		} else {
+			(*s)[i] = nil
+		}
+	}
+	return nil
 }

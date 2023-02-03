@@ -1,12 +1,107 @@
 package service
 
 import (
+	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"splendor/model"
 	"splendor/utils"
+	"time"
 )
+
+// Ping Ping
+func Ping(c *gin.Context) {
+	c.String(http.StatusOK, "Pong")
+}
+
+// Join 加入游戏
+func Join(c *gin.Context) {
+
+	// 获取用户名
+	username := c.Query("username")
+	_ = username
+	session := sessions.Default(c)
+
+	uuid := utils.GetUuidV1()
+
+	session.Set("username", uuid)
+
+	err := session.Save()
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	player, playerID, err := model.JoinNewPlayer()
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	_, tableID, err := model.JoinDefaultTable(player)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	SessionsMap[uuid] = &ConnectStatus{
+		CreateTime: time.Now(),
+		TableID:    tableID,
+		PlayerID:   playerID,
+	}
+
+	fmt.Println(SessionsMap[uuid].Info())
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":     "created",
+		"username":   player.Name,
+		"msg":        "set session success",
+		"player_num": 1,
+		"table_id":   tableID,
+		"player_id":  playerID,
+		"session_id": uuid,
+	})
+}
+
+// Leave 离开游戏
+func Leave(c *gin.Context) {
+
+	sessionID, err := GetSessionID(c)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	session := SessionsMap[sessionID]
+	model.LeaveDefaultTable(session.PlayerID)  // 清理桌面中的角色
+	model.DeleteGlobalPlayer(session.PlayerID) // 清理全局角色对象
+
+	delete(SessionsMap, sessionID)
+
+	c.String(http.StatusOK, "delete session success")
+}
+
+// Alive 心跳
+func Alive(c *gin.Context) {
+	session := sessions.Default(c)
+
+	username := session.Get("username")
+	var result string
+
+	if username != nil && username != "" {
+		result = username.(string)
+		if _, ok := SessionsMap[result]; !ok {
+			result = "no exist"
+		}
+	} else {
+		result = "no exist"
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"result": result,
+	})
+}
 
 // TableInfo 获取桌面信息HTTP接口
 func TableInfo(c *gin.Context) {
@@ -122,7 +217,7 @@ func TakeThreeTokens(c *gin.Context) {
 		tokens = append(tokens, int(tokensStrings[i]-'0'))
 	}
 
-	ret, err := ActionTakeThreeTokens(player, table, tokens)
+	ret, err := model.ActionTakeThreeTokens(player, table, tokens)
 	if err != nil {
 		BuildErrorResponse(c, err)
 		return
@@ -154,7 +249,7 @@ func TakeDoubleTokens(c *gin.Context) {
 
 	tokenIDString := c.Query("token_id")
 	tokenID := utils.ToInt(tokenIDString)
-	ret, err := ActionTakeDoubleTokens(player, table, tokenID)
+	ret, err := model.ActionTakeDoubleTokens(player, table, tokenID)
 	if err != nil {
 		BuildErrorResponse(c, err)
 		return
@@ -190,7 +285,7 @@ func ReturnTokens(c *gin.Context) {
 		tokenIdx = append(tokenIdx, int(tokensStrings[i]-'0'))
 	}
 
-	err = ActionReturnTokens(player, table, tokenIdx)
+	err = model.ActionReturnTokens(player, table, tokenIdx)
 	if err != nil {
 		BuildErrorResponse(c, err)
 		return
@@ -198,6 +293,7 @@ func ReturnTokens(c *gin.Context) {
 	c.String(http.StatusOK, "ok")
 }
 
+// GetCurrentSessionTableAndPlayer 获取当前session所在的桌台和玩家
 func GetCurrentSessionTableAndPlayer(c *gin.Context) (*model.Table, *model.Player, error) {
 	sessionID, err := GetSessionID(c)
 	if err != nil {
@@ -215,6 +311,7 @@ func GetCurrentSessionTableAndPlayer(c *gin.Context) (*model.Table, *model.Playe
 	return table, player, nil
 }
 
+// PurchaseDevelopmentCardByTokens 使用 tokens 购买发展卡
 func PurchaseDevelopmentCardByTokens(c *gin.Context) {
 	table, player, err := GetCurrentSessionTableAndPlayer(c)
 	if err != nil {
@@ -253,7 +350,8 @@ func PurchaseDevelopmentCardByTokens(c *gin.Context) {
 	})
 }
 
-func ReserveDevelopmentCardApi(c *gin.Context) {
+// ReserveDevelopmentCard 保存发展卡
+func ReserveDevelopmentCard(c *gin.Context) {
 	table, player, err := GetCurrentSessionTableAndPlayer(c)
 	if err != nil {
 		BuildErrorResponse(c, err)
@@ -262,7 +360,7 @@ func ReserveDevelopmentCardApi(c *gin.Context) {
 
 	cardIdx := model.DevelopmentCardIndexTransfer(utils.ToInt(c.Query("card_idx")))
 
-	err = ReserveDevelopmentCard(player, table, cardIdx)
+	err = model.ReserveDevelopmentCard(player, table, cardIdx)
 	if err != nil {
 		BuildErrorResponse(c, err)
 		return
@@ -280,7 +378,8 @@ func ReserveDevelopmentCardApi(c *gin.Context) {
 	})
 }
 
-func PurchaseHandCardApi(c *gin.Context) {
+// PurchaseHandCard 购买手卡
+func PurchaseHandCard(c *gin.Context) {
 	table, player, err := GetCurrentSessionTableAndPlayer(c)
 	if err != nil {
 		BuildErrorResponse(c, err)

@@ -14,14 +14,14 @@ var GlobalPlayer = make(map[string]*Player)
 var PlayerLastLoginTime = make(map[string]time.Time)
 
 type Player struct {
-	Name             string               // 玩家名字
-	Tokens           TokenStack           // 宝石列表
-	Bonuses          TokenStack           // 奖励列表
-	DevelopmentCards DevelopmentCardStack // 发展卡列表
-	HandCards        DevelopmentCardStack // 手中的发展卡
-	NobleTitles      NobleTilesStack      // 贵族
-	Prestige         int                  // 声望
-	PlayerID         string               // 玩家ID
+	Name             string               `json:"name"`              // 玩家名字
+	Tokens           TokenStack           `json:"tokens"`            // 宝石列表
+	Bonuses          TokenStack           `json:"bonuses"`           // 奖励列表
+	DevelopmentCards DevelopmentCardStack `json:"development_cards"` // 发展卡列表
+	HandCards        DevelopmentCardStack `json:"hand_cards"`        // 手中的发展卡
+	NobleTitles      NobleTilesStack      `json:"noble_titles"`      // 贵族
+	Prestige         int                  `json:"prestige"`          // 声望
+	PlayerID         string               `json:"player_id"`         // 玩家ID
 }
 
 // CreatePlayer 创建一个玩家
@@ -53,6 +53,9 @@ func JoinNewPlayer() (*Player, string, error) {
 	}
 	GlobalPlayer[playerID] = player
 	PlayerLastLoginTime[playerID] = time.Now()
+
+	utils.SystemPrintf("玩家: %s 登陆游戏\n", player.Name)
+
 	return player, playerID, nil
 }
 

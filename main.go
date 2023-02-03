@@ -11,22 +11,21 @@ func init() {
 	model.InitDefaultTable()
 }
 
-func NewGame() {
-	table, err := service.CreateANewGame(2)
-	if err != nil {
-		panic(err)
-	}
-	err = service.TurnRound(table)
-	if err != nil {
-		panic(err)
-	}
-}
-
 func RunServer() {
 	service.Run()
+}
+
+func TableVisual() {
+	table := model.CreateTable()
+	player := model.CreatePlayer()
+	table.AddPlayer(player)
+	table.Reveal()
+
+	table.ShowVisualInfo()
 }
 
 func main() {
 	//NewGame()
 	RunServer()
+	//TableVisual()
 }

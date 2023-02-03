@@ -1,12 +1,12 @@
 package model
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/fatih/color"
 )
 
 func (t *Table) ShowVisualInfo() {
-
 	fmt.Println("\033[40m                                                                \033[0m")
 	fmt.Println(t.TokenStack.Visual())
 	fmt.Printf("[%d] %s\n", len(t.DevelopmentCardStacks.TopStack), t.RevealedDevelopmentCards.TopStack.Visual())
@@ -105,4 +105,20 @@ func (t *Table) ShowTableInfo() string {
 	ret = ret + fmt.Sprintf("%s\n", line)
 
 	return ret
+}
+
+func (t *Table) Marshal() (string, error) {
+	b, err := json.Marshal(t)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
+}
+
+func (t *Table) Unmarshal(s string) error {
+	err := json.Unmarshal([]byte(s), t)
+	if err != nil {
+		return err
+	}
+	return nil
 }

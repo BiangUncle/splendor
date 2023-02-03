@@ -1,6 +1,7 @@
 package model
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"splendor/utils"
@@ -16,23 +17,18 @@ var defaultTableID string
 
 // Table 游戏桌面
 type Table struct {
-	Players     []*Player   // 玩家
-	PlayersLock *sync.Mutex // 玩家操作锁
-	GameTime    time.Time   // 游戏时间
-
-	DevelopmentCardStacks    *DevelopmentCardStacks // 发展卡堆
-	RevealedDevelopmentCards *DevelopmentCardStacks // 暴露的发展卡
-
-	NobleTilesStack    NobleTilesStack // 贵族卡堆
-	RevealedNobleTiles NobleTilesStack // 暴露的贵族卡
-
-	TokenStack TokenStack // 宝石卡堆
-
-	CurrentPlayer    *Player // 当前角色
-	CurrentPlayerIdx int     // 当前角色索引
-
-	TableID string // 桌台ID
-	Name    string // 桌台名字
+	Players                  []*Player              `json:"players"`                    // 玩家
+	PlayersLock              *sync.Mutex            `json:"players_lock"`               // 玩家操作锁
+	GameTime                 time.Time              `json:"game_time"`                  // 游戏时间
+	DevelopmentCardStacks    *DevelopmentCardStacks `json:"development_card_stacks"`    // 发展卡堆
+	RevealedDevelopmentCards *DevelopmentCardStacks `json:"revealed_development_cards"` // 暴露的发展卡
+	NobleTilesStack          NobleTilesStack        `json:"noble_tiles_stack"`          // 贵族卡堆
+	RevealedNobleTiles       NobleTilesStack        `json:"revealed_noble_tiles"`       // 暴露的贵族卡
+	TokenStack               TokenStack             `json:"token_stack"`                // 宝石卡堆
+	CurrentPlayer            *Player                `json:"current_player"`             // 当前角色
+	CurrentPlayerIdx         int                    `json:"current_player_idx"`         // 当前角色索引
+	TableID                  string                 `json:"table_id"`                   // 桌台ID
+	Name                     string                 `json:"name"`                       // 桌台名字
 }
 
 // InitDefaultTable 创建一个default桌台
@@ -54,6 +50,9 @@ func JoinDefaultTable(player *Player) (*Table, string, error) {
 	nextIdx := len(defaultTable.Players)
 	player.Name = fmt.Sprintf("玩家[%+v]", nextIdx)
 	defaultTable.AddPlayer(player)
+
+	utils.SystemPrintf("玩家: %s 加入房间: %s\n", player.Name, defaultTable.Name)
+
 	return defaultTable, defaultTableID, nil
 }
 
@@ -366,4 +365,54 @@ func (t *Table) NextPlayerIdx() int {
 	n := len(t.Players)
 	nextPlayerIdx := (t.CurrentPlayerIdx + 1) % n
 	return nextPlayerIdx
+}
+
+type TableStatus struct {
+	TokenStatus       TokenStack `json:"token_status"`
+	TopStackStatus    []int      `json:"top_stack_status"`
+	MiddleStackStatus []int      `json:"middle_stack_status"`
+	BottomStackStatus []int      `json:"bottom_stack_status"`
+	NobleTileStatus   []int      `json:"noble_tile_status"`
+}
+
+func (t *Table) Status() (string, error) {
+	s := &TableStatus{}
+	s.TopStackStatus = t.RevealedDevelopmentCards.TopStack.Status()
+	s.MiddleStackStatus = t.RevealedDevelopmentCards.MiddleStack.Status()
+	s.BottomStackStatus = t.RevealedDevelopmentCards.BottomStack.Status()
+	s.NobleTileStatus = t.RevealedNobleTiles.Status()
+	s.TokenStatus = t.TokenStack
+
+	b, err := json.Marshal(s)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
+}
+
+func (t *Table) LoadStatus(s string) error {
+	status := &TableStatus{}
+	err := json.Unmarshal([]byte(s), status)
+	if err != nil {
+		return err
+	}
+	err = t.RevealedDevelopmentCards.TopStack.LoadStatus(status.TopStackStatus)
+	if err != nil {
+		return err
+	}
+	err = t.RevealedDevelopmentCards.MiddleStack.LoadStatus(status.MiddleStackStatus)
+	if err != nil {
+		return err
+	}
+	err = t.RevealedDevelopmentCards.BottomStack.LoadStatus(status.BottomStackStatus)
+	if err != nil {
+		return err
+	}
+	err = t.RevealedNobleTiles.LoadStatus(status.NobleTileStatus)
+	if err != nil {
+		return err
+	}
+	t.TokenStack = status.TokenStatus
+
+	return nil
 }

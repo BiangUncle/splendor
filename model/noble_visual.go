@@ -48,7 +48,11 @@ func (n *NobleTile) Visual() string {
 func (s NobleTilesStack) Visual() string {
 	info := ""
 	for _, n := range s {
-		info += n.Visual()
+		if n == nil {
+			info += "[      ]"
+		} else {
+			info += n.Visual()
+		}
 	}
 	return info
 }

@@ -3,11 +3,20 @@ package service
 import (
 	"fmt"
 	"splendor/model"
+	"sync"
 	"time"
 )
 
 type OneCron struct {
 	stop chan struct{}
+	wg   *sync.WaitGroup
+}
+
+func ConstructCron() *OneCron {
+	return &OneCron{
+		stop: make(chan struct{}),
+		wg:   &sync.WaitGroup{},
+	}
 }
 
 func (o *OneCron) CheckPlayerNetStatus() {

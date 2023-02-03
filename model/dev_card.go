@@ -205,3 +205,35 @@ func (s *DevelopmentCardStacks) TakeCard(cardIdx int) (*DevelopmentCard, int, bo
 	}
 	return nil, -1, false
 }
+
+func (s DevelopmentCardStack) Status() []int {
+	var ret []int
+	for _, c := range s {
+		if c == nil {
+			ret = append(ret, 0)
+		} else {
+			ret = append(ret, c.Idx)
+		}
+	}
+	return ret
+}
+
+func (s *DevelopmentCardStack) LoadStatus(status []int) error {
+	*s = make(DevelopmentCardStack, RevealedDevelopmentCardNumPerLevel)
+	for i, idx := range status {
+		if _, ok := DevelopmentCardMap[idx]; ok {
+			(*s)[i] = DevelopmentCardMap[idx]
+		} else {
+			(*s)[i] = nil
+		}
+	}
+	return nil
+}
+
+func (s DevelopmentCardStacks) Status() [][]int {
+	var ret [][]int
+	ret = append(ret, s.TopStack.Status())
+	ret = append(ret, s.MiddleStack.Status())
+	ret = append(ret, s.BottomStack.Status())
+	return ret
+}
