@@ -197,15 +197,7 @@ func KeepALive(c *gin.Context) {
 
 // TakeThreeTokens 拿走三个宝石
 func TakeThreeTokens(c *gin.Context) {
-	sessionID, err := GetSessionID(c)
-	if err != nil {
-		BuildErrorResponse(c, err)
-		return
-	}
-
-	connectStatus := SessionsMap[sessionID]
-	table := model.GetDefaultTable()
-	player, err := model.GetGlobalPlayer(connectStatus.PlayerID)
+	table, player, err := GetCurrentSessionTableAndPlayer(c)
 	if err != nil {
 		BuildErrorResponse(c, err)
 		return
@@ -223,7 +215,10 @@ func TakeThreeTokens(c *gin.Context) {
 		return
 	}
 
-	nextPlayer := table.NextTurn()
+	nextPlayer := player
+	if ret == 0 {
+		nextPlayer = table.NextTurn()
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"ret":              ret,
@@ -233,15 +228,7 @@ func TakeThreeTokens(c *gin.Context) {
 
 // TakeDoubleTokens 拿走两个宝石
 func TakeDoubleTokens(c *gin.Context) {
-	sessionID, err := GetSessionID(c)
-	if err != nil {
-		BuildErrorResponse(c, err)
-		return
-	}
-
-	connectStatus := SessionsMap[sessionID]
-	table := model.GetDefaultTable()
-	player, err := model.GetGlobalPlayer(connectStatus.PlayerID)
+	table, player, err := GetCurrentSessionTableAndPlayer(c)
 	if err != nil {
 		BuildErrorResponse(c, err)
 		return
@@ -255,7 +242,10 @@ func TakeDoubleTokens(c *gin.Context) {
 		return
 	}
 
-	nextPlayer := table.NextTurn()
+	nextPlayer := player
+	if ret == 0 {
+		nextPlayer = table.NextTurn()
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"ret":              ret,
@@ -265,32 +255,31 @@ func TakeDoubleTokens(c *gin.Context) {
 
 // ReturnTokens 返还多余的宝石
 func ReturnTokens(c *gin.Context) {
-	sessionID, err := GetSessionID(c)
-	if err != nil {
-		BuildErrorResponse(c, err)
-		return
-	}
 
-	connectStatus := SessionsMap[sessionID]
-	table := model.GetDefaultTable()
-	player, err := model.GetGlobalPlayer(connectStatus.PlayerID)
+	table, player, err := GetCurrentSessionTableAndPlayer(c)
 	if err != nil {
 		BuildErrorResponse(c, err)
 		return
 	}
 
 	tokensStrings := c.Query("tokens")
-	var tokenIdx []int
-	for i := 0; i < len(tokensStrings); i++ {
-		tokenIdx = append(tokenIdx, int(tokensStrings[i]-'0'))
-	}
-
-	err = model.ActionReturnTokens(player, table, tokenIdx)
+	tokens, err := model.Strings2TokenStack(tokensStrings)
 	if err != nil {
 		BuildErrorResponse(c, err)
 		return
 	}
-	c.String(http.StatusOK, "ok")
+
+	err = model.ActionReturnTokens(player, table, tokens)
+	if err != nil {
+		BuildErrorResponse(c, err)
+		return
+	}
+
+	nextPlayer := table.NextTurn()
+
+	c.JSON(http.StatusOK, gin.H{
+		"next_player_name": nextPlayer.Name,
+	})
 }
 
 // GetCurrentSessionTableAndPlayer 获取当前session所在的桌台和玩家
@@ -321,12 +310,8 @@ func PurchaseDevelopmentCardByTokens(c *gin.Context) {
 
 	tokensStrings := c.Query("tokens")
 	cardIdx := model.DevelopmentCardIndexTransfer(utils.ToInt(c.Query("card_idx")))
-	var tokens []int
-	for i := 0; i < len(tokensStrings); i++ {
-		tokens = append(tokens, int(tokensStrings[i]-'0'))
-	}
 
-	tokens, err = model.IntList2TokenStack(tokens)
+	tokens, err := model.Strings2TokenStack(tokensStrings)
 	if err != nil {
 		BuildErrorResponse(c, err)
 		return
@@ -343,6 +328,7 @@ func PurchaseDevelopmentCardByTokens(c *gin.Context) {
 		BuildErrorResponse(c, err)
 		return
 	}
+
 	nextPlayer := table.NextTurn()
 
 	c.JSON(http.StatusOK, gin.H{
@@ -361,11 +347,6 @@ func ReserveDevelopmentCard(c *gin.Context) {
 	cardIdx := model.DevelopmentCardIndexTransfer(utils.ToInt(c.Query("card_idx")))
 
 	err = model.ReserveDevelopmentCard(player, table, cardIdx)
-	if err != nil {
-		BuildErrorResponse(c, err)
-		return
-	}
-	err = model.ReceiveNoble(player, table)
 	if err != nil {
 		BuildErrorResponse(c, err)
 		return
@@ -411,6 +392,7 @@ func PurchaseHandCard(c *gin.Context) {
 		BuildErrorResponse(c, err)
 		return
 	}
+
 	nextPlayer := table.NextTurn()
 
 	c.JSON(http.StatusOK, gin.H{

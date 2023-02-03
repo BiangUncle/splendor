@@ -81,6 +81,15 @@ func IntList2TokenStack(i []int) (TokenStack, error) {
 	return selected, nil
 }
 
+// Strings2TokenStack token字符串转对象
+func Strings2TokenStack(tokensStrings string) (TokenStack, error) {
+	var tokens []int
+	for i := 0; i < len(tokensStrings); i++ {
+		tokens = append(tokens, int(tokensStrings[i]-'0'))
+	}
+	return IntList2TokenStack(tokens)
+}
+
 // takeToken 拿走一定数量的宝石
 func (s TokenStack) takeToken(tokenId int, num int) (TokenStack, error) {
 	// 判断是否拿得到

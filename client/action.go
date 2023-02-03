@@ -177,7 +177,7 @@ func TableInfo(g *GameStatus) error {
 		return err
 	}
 	tableInfo := gjson.Get(content, "tableInfo").String()
-	fmt.Println(tableInfo)
+	g.RetContent = tableInfo
 	return nil
 }
 

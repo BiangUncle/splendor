@@ -264,3 +264,8 @@ func (p *Player) TakeOutTokens(t TokenStack) (TokenStack, error) {
 	}
 	return t, nil
 }
+
+// CardNum 发展卡数量
+func (p *Player) CardNum() int {
+	return len(p.DevelopmentCards)
+}

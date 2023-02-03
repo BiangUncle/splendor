@@ -19,6 +19,7 @@ type GameStatus struct {
 	*GameCron
 	ExitFunc func(interface{}) error
 	*Screen
+	RetContent string // http返回信息
 }
 
 func ConstructGameStatus(c *Client) *GameStatus {
@@ -48,6 +49,7 @@ func (g *GameStatus) AskWhichTurn() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	g.RetContent = content
 
 	return content, nil
 }
@@ -70,6 +72,7 @@ func (g *GameStatus) JoinGame() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	g.RetContent = content
 
 	return content, nil
 }
@@ -107,6 +110,7 @@ func (g *GameStatus) TableInfo() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	g.RetContent = "已显示"
 
 	return content, nil
 }
@@ -121,6 +125,7 @@ func (g *GameStatus) NextTurn() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	g.RetContent = content
 
 	return content, nil
 }
@@ -156,7 +161,6 @@ func (g *GameStatus) IfMyTurn() (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	fmt.Println(content)
 
 	curPlayerID := gjson.Get(content, "current_player_id").String()
 	if curPlayerID != g.PlayerID {
@@ -177,6 +181,8 @@ func (g *GameStatus) TakeThreeTokens(tokensString string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	g.RetContent = content
+
 	ret := gjson.Get(content, "ret").Int()
 	if ret != 0 {
 		return "ret", nil
@@ -198,6 +204,8 @@ func (g *GameStatus) TakeDoubleTokens(tokenId int) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	g.RetContent = content
+
 	ret := gjson.Get(content, "ret").Int()
 	if ret != 0 {
 		return "ret", nil
@@ -209,21 +217,15 @@ func (g *GameStatus) TakeDoubleTokens(tokenId int) (string, error) {
 // ReturnTokens 返还多余的宝石
 func (g *GameStatus) ReturnTokens(tokensString string) (string, error) {
 
-	resp, err := g.SendRequest("return_tokens", map[string]any{
+	content, err := g.SendRequestAndGetContent("return_tokens", map[string]any{
 		"tokens": tokensString,
 	})
 	if err != nil {
 		return "", err
 	}
-	code, msg, err := CheckRespStatusCode(resp)
-	if err != nil {
-		return "", err
-	}
-	if code != http.StatusOK {
-		return "", errors.New(msg)
-	}
+	g.RetContent = content
 
-	return "ok", nil
+	return content, nil
 
 }
 
@@ -260,6 +262,7 @@ func (g *GameStatus) PurchaseDevelopmentCard(cardIdx int, tokensString string) (
 	if err != nil {
 		return "", err
 	}
+	g.RetContent = content
 
 	return content, nil
 }
@@ -271,6 +274,7 @@ func (g *GameStatus) ReserveDevelopmentCard(cardIdx int) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	g.RetContent = content
 
 	return content, nil
 }
@@ -283,6 +287,7 @@ func (g *GameStatus) PurchaseHandCard(cardIdx int, tokensString string) (string,
 	if err != nil {
 		return "", err
 	}
+	g.RetContent = content
 
 	return content, nil
 }

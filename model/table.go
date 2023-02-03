@@ -10,6 +10,7 @@ import (
 )
 
 const RevealedDevelopmentCardNumPerLevel = 4
+const WinPrestigeCondition = 15
 
 var GlobalTable = make(map[string]*Table)
 var defaultTable *Table
@@ -415,4 +416,25 @@ func (t *Table) LoadStatus(s string) error {
 	t.TokenStack = status.TokenStatus
 
 	return nil
+}
+
+func (t *Table) WhoWin() (*Player, int) {
+	var winPlayer *Player
+	var winIdx int
+	for idx, player := range t.Players {
+		if player.Prestige > WinPrestigeCondition {
+			if winPlayer != nil && winPlayer.Prestige > player.Prestige {
+				continue
+			}
+			if winPlayer != nil &&
+				winPlayer.Prestige == player.Prestige &&
+				winPlayer.CardNum() <= player.CardNum() {
+				continue
+			}
+			winPlayer = player
+			winIdx = idx
+		}
+	}
+
+	return winPlayer, winIdx
 }

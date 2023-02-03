@@ -22,9 +22,10 @@ func Start() {
 
 	for {
 		//Clf()
-		g.Clf()
-		g.Append(g.ShowPlayerInfo(), ShowOptionsInfos())
+		g.Append(g.ShowPlayerInfo(), g.ReturnContent(), ShowOptionsInfos())
 		g.Print()
+		g.Clf()
+
 		action, err := utils.InputInt("请选择你的操作")
 		if err != nil {
 			fmt.Println(err)

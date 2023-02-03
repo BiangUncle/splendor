@@ -26,6 +26,13 @@ func (g *GameStatus) ShowPlayerInfo() string {
 		ret += info
 	}
 	ret += "\n"
+	ret += "\033[40m                                                                                   \033[0m"
+	return ret
+}
+
+func (g *GameStatus) ReturnContent() string {
+	ret := ""
+	ret += g.RetContent + "\n"
 	ret += "\033[40m                                                                                   \033[0m\n"
 	return ret
 }

@@ -175,15 +175,10 @@ func ReserveDevelopmentCard(p *Player, t *Table, cardIdx int) error {
 }
 
 // ActionReturnTokens 角色返还多余的宝石
-func ActionReturnTokens(p *Player, t *Table, tokenIdx []int) error {
-
-	tokens, err := IntList2TokenStack(tokenIdx)
-	if err != nil {
-		return err
-	}
+func ActionReturnTokens(p *Player, t *Table, tokens TokenStack) error {
 
 	// 扣除角色身上的宝石
-	err = p.Tokens.Minus(tokens)
+	err := p.Tokens.Minus(tokens)
 	if err != nil {
 		return err
 	}
