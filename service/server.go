@@ -115,7 +115,7 @@ func Run() {
 	e = SetSession(e)
 	e = InitHandler(e)
 
-	srv := NewServer(":8765", e)
+	srv := NewServer("192.168.2.102:8765", e)
 	c := ConstructCron()
 
 	go RunServer(c, srv)

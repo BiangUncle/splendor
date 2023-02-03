@@ -105,29 +105,12 @@ func Alive(c *gin.Context) {
 
 // TableInfo 获取桌面信息HTTP接口
 func TableInfo(c *gin.Context) {
-	session := sessions.Default(c)
-
-	username := session.Get("username")
-	var result string
-
-	if username != nil && username != "" {
-		result = username.(string)
-		if _, ok := SessionsMap[result]; !ok {
-			result = "no exist"
-			c.JSON(http.StatusOK, gin.H{
-				"result": result,
-			})
-			return
-		}
-	} else {
-		result = "no exist"
-		c.JSON(http.StatusOK, gin.H{
-			"result": result,
-		})
+	sessionId, err := GetSessionID(c)
+	if err != nil {
+		BuildErrorResponse(c, err)
 		return
 	}
-
-	connectStatus := SessionsMap[result]
+	connectStatus := SessionsMap[sessionId]
 	table, err := model.GetGlobalTable(connectStatus.TableID)
 	if err != nil {
 		BuildErrorResponse(c, err)

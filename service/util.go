@@ -25,21 +25,31 @@ func GetSessionID(c *gin.Context) (string, error) {
 		result = username.(string)
 		if _, ok := SessionsMap[result]; !ok {
 			result = "no exist"
-			// todo: 需要修改为其他状态码
-			c.JSON(http.StatusOK, gin.H{
-				"result": result,
-			})
-			return result, errors.New("no sessionID")
 		}
 	} else {
 		result = "no exist"
-		c.JSON(http.StatusOK, gin.H{
-			"result": result,
-		})
-		return result, errors.New("no sessionID")
 	}
 
-	return result, nil
+	if result != "no exist" {
+		return result, nil
+	}
+
+	result = c.Request.Header.Get("cookie")
+	if result != "" {
+		return result, nil
+	}
+
+	result = c.Query("session_id")
+	if result != "" {
+		return result, nil
+	}
+
+	result = "no exist"
+	c.JSON(http.StatusOK, gin.H{
+		"result": result,
+	})
+	return result, errors.New("no sessionID")
+
 }
 
 // _addSlash 增加斜杠

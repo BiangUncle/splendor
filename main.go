@@ -36,7 +36,7 @@ func Whole() {
 
 func main() {
 	//NewGame()
-	//RunServer()
+	RunServer()
 	//TableVisual()
-	Whole()
+	//Whole()
 }
