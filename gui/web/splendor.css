@@ -1,0 +1,38 @@
+body {
+    width: 1920px;
+    height: 1080px;
+    margin: 0;
+}
+
+.table {
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.card_stack {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.dev_card {
+    height: 200px;
+    width: 300px;
+    background-color: darkgrey;
+    text-align: center;
+    text-justify: auto;
+    margin: 10px;
+    transition-duration: 0.3s;
+    transform: perspective(1px) translateZ(0);
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+    transition-property: box-shadow, transform, background-color;
+}
+
+.dev_card:hover {
+    background-color: aliceblue;
+    box-shadow: 0 10px 10px -10px rgba(0, 0, 0, 0.5);
+    transform: scale(1.05);
+}
