@@ -1,0 +1,10 @@
+{
+  "Name":"Splendor",
+  "Host":"127.0.0.1",
+  "TCPPort":7777,
+  "MaxConn":3,
+  "WorkerPoolSize":10,
+  "LogDir": "./mylog",
+  "LogFile":"zinx.log",
+  "LogIsolationLevel":0
+}
