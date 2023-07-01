@@ -1,70 +1,42 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/znet"
-	"splendor/utils"
-	"time"
+	"github.com/golang/protobuf/proto"
+	"github.com/gorilla/websocket"
+	"os"
+	pb "splendor/pb/proto"
 )
 
-var stopChannel = make(chan string, 0)
+func main() {
+	dl := websocket.Dialer{}
+	conn, _, err := dl.Dial("ws://127.0.0.1:8888", nil)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer conn.Close()
+	go send(conn)
 
-//Client custom business
-func pingLoop(conn ziface.IConnection) {
 	for {
-		err := conn.SendMsg(1, []byte("Ping...Ping...Ping...[FromClient]"))
+		_, p, e := conn.ReadMessage()
+		if e != nil {
+			break
+		}
+		roomList := &pb.RoomList{}
+		err = proto.Unmarshal(p, roomList)
 		if err != nil {
 			fmt.Println(err)
-			break
 		}
-
-		time.Sleep(1 * time.Second)
+		fmt.Println(roomList)
 	}
 }
 
-func action(conn ziface.IConnection) {
+func send(conn *websocket.Conn) {
 	for {
-		s, _ := utils.InputString("请输入操作")
-		switch s {
-		case "server":
-			fmt.Println("加入服务器")
-			err := conn.SendMsg(1, []byte("加入服务器"))
-			if err != nil {
-				fmt.Println(err)
-				break
-			}
-		case "table":
-			fmt.Println("加入房间")
-			err := conn.SendMsg(1, []byte("加入房间"))
-			if err != nil {
-				fmt.Println(err)
-				break
-			}
-		case "stop":
-			fmt.Println("退出")
-			stopChannel <- "stop"
-			break
-		}
+		reader := bufio.NewReader(os.Stdin)
+		l, _, _ := reader.ReadLine()
+		conn.WriteMessage(1, l)
 	}
-}
-
-//Executed when a connection is created
-func onClientStart(conn ziface.IConnection) {
-	fmt.Println("onClientStart is Called ... ")
-	go action(conn)
-}
-
-func main() {
-	//Create a client client
-	client := znet.NewClient("127.0.0.1", 7777)
-
-	//Set the hook function after the link is successfully established
-	client.SetOnConnStart(onClientStart)
-
-	//start the client
-	client.Start()
-
-	<-stopChannel
-	close(stopChannel)
 }

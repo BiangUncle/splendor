@@ -1,0 +1,17 @@
+syntax = "proto3";  //指定版本，必须要写（proto3、proto2）
+option go_package = "/proto";
+package pb;
+
+
+//message是固定的。UserInfo是类名，可以随意指定，符合规范即可
+message RoomList{
+  repeated RoomInfo room_info = 1;  // 房间列表
+}
+
+
+message RoomInfo {
+  int64 room_id = 1;        // 房间号
+  string room_name = 2;     // 房间名
+  int64 cur_player_num = 3; // 房间当前人数
+  int64 max_player_num = 4; // 房间最高人数
+}

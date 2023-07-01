@@ -1,0 +1,207 @@
+2023/05/03 00:48:27 [INFO]msghandler.go:105: Add Router msgID = 1
+2023/05/03 00:48:27 [INFO]msghandler.go:105: Add Router msgID = 2
+2023/05/03 00:48:27 [INFO]server.go:277: [START] Server name: Splendor,listener at IP: 127.0.0.1, Port 7777 is starting
+2023/05/03 00:48:27 [INFO]msghandler.go:110: Worker ID = 0 is started.
+2023/05/03 00:48:27 [INFO]msghandler.go:110: Worker ID = 6 is started.
+2023/05/03 00:48:27 [INFO]msghandler.go:110: Worker ID = 5 is started.
+2023/05/03 00:48:27 [INFO]msghandler.go:110: Worker ID = 3 is started.
+2023/05/03 00:48:27 [INFO]msghandler.go:110: Worker ID = 1 is started.
+2023/05/03 00:48:27 [INFO]msghandler.go:110: Worker ID = 9 is started.
+2023/05/03 00:48:27 [INFO]msghandler.go:110: Worker ID = 2 is started.
+2023/05/03 00:48:27 [INFO]msghandler.go:110: Worker ID = 7 is started.
+2023/05/03 00:48:27 [INFO]msghandler.go:110: Worker ID = 8 is started.
+2023/05/03 00:48:27 [INFO]msghandler.go:110: Worker ID = 4 is started.
+2023/05/03 00:48:32 [INFO]connmanager.go:36: connection add to ConnManager successfully: conn num = 1
+2023/05/03 00:48:32 [INFO]connection.go:452: ZINX CallOnConnStart....
+2023/05/03 00:48:32 [INFO]client.go:166: [START] Zinx Client LocalAddr: 127.0.0.1:59743, RemoteAddr: 127.0.0.1:7777
+2023/05/03 00:48:32 [ERROR]connection.go:207: Connection Start() error: runtime error: invalid memory address or nil pointer dereference
+2023/05/03 00:48:32 [INFO]connection.go:452: ZINX CallOnConnStart....
+2023/05/03 00:48:32 [INFO]connection.go:148: [Reader Goroutine is running]
+2023/05/03 00:49:18 [INFO]connmanager.go:36: connection add to ConnManager successfully: conn num = 2
+2023/05/03 00:49:18 [INFO]client.go:166: [START] Zinx Client LocalAddr: 127.0.0.1:59755, RemoteAddr: 127.0.0.1:7777
+2023/05/03 00:49:18 [INFO]connection.go:452: ZINX CallOnConnStart....
+2023/05/03 00:49:18 [INFO]connection.go:452: ZINX CallOnConnStart....
+2023/05/03 00:49:18 [ERROR]connection.go:207: Connection Start() error: runtime error: invalid memory address or nil pointer dereference
+2023/05/03 00:49:18 [INFO]connection.go:148: [Reader Goroutine is running]
+2023/05/03 00:50:31 [INFO]client.go:166: [START] Zinx Client LocalAddr: 127.0.0.1:59795, RemoteAddr: 127.0.0.1:7777
+2023/05/03 00:50:31 [INFO]connmanager.go:36: connection add to ConnManager successfully: conn num = 3
+2023/05/03 00:50:31 [INFO]connection.go:452: ZINX CallOnConnStart....
+2023/05/03 00:50:31 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:0
+2023/05/03 00:50:31 [INFO]connection.go:148: [Reader Goroutine is running]
+2023/05/03 00:50:31 [INFO]connection.go:452: ZINX CallOnConnStart....
+2023/05/03 00:50:31 [ERROR]connection.go:207: Connection Start() error: runtime error: invalid memory address or nil pointer dereference
+2023/05/03 00:50:31 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:5000000
+2023/05/03 00:50:31 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:10000000
+2023/05/03 00:50:31 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:20000000
+2023/05/03 00:50:31 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:40000000
+2023/05/03 00:50:31 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:80000000
+2023/05/03 00:50:31 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:160000000
+2023/05/03 00:50:32 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:320000000
+2023/05/03 00:50:32 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:640000000
+2023/05/03 00:50:33 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:1000000000
+2023/05/03 00:50:34 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:1000000000
+2023/05/03 00:50:35 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:1000000000
+2023/05/03 00:50:36 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:1000000000
+2023/05/03 00:50:37 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:1000000000
+2023/05/03 00:50:38 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:1000000000
+2023/05/03 00:50:39 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:1000000000
+2023/05/03 00:50:40 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:1000000000
+2023/05/03 00:50:41 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:1000000000
+2023/05/03 00:50:42 [INFO]server.go:318: [SERVE] Zinx server , name Splendor, Serve Interrupt, signal = interrupt
+2023/05/03 00:50:42 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:1000000000
+2023/05/03 00:50:43 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:1000000000
+2023/05/03 00:50:44 [INFO]server.go:196: Exceeded the maxConnNum:3, Wait:1000000000
+2023/05/03 00:50:44 [INFO]server.go:302: [STOP] Zinx server , name Splendor
+2023/05/03 00:50:44 [INFO]connmanager.go:85: Clear All Connections successfully: conn num = 0
+2023/05/03 09:33:50 [INFO]msghandler.go:105: Add Router msgID = 1
+2023/05/03 09:33:50 [INFO]msghandler.go:105: Add Router msgID = 2
+2023/05/03 09:33:50 [INFO]server.go:277: [START] Server name: Splendor,listener at IP: 127.0.0.1, Port 7777 is starting
+2023/05/03 09:33:50 [INFO]msghandler.go:110: Worker ID = 0 is started.
+2023/05/03 09:33:50 [INFO]msghandler.go:110: Worker ID = 6 is started.
+2023/05/03 09:33:50 [INFO]msghandler.go:110: Worker ID = 5 is started.
+2023/05/03 09:33:50 [INFO]msghandler.go:110: Worker ID = 2 is started.
+2023/05/03 09:33:50 [INFO]msghandler.go:110: Worker ID = 1 is started.
+2023/05/03 09:33:50 [INFO]msghandler.go:110: Worker ID = 3 is started.
+2023/05/03 09:33:50 [INFO]msghandler.go:110: Worker ID = 8 is started.
+2023/05/03 09:33:50 [INFO]msghandler.go:110: Worker ID = 9 is started.
+2023/05/03 09:33:50 [INFO]msghandler.go:110: Worker ID = 7 is started.
+2023/05/03 09:33:50 [INFO]msghandler.go:110: Worker ID = 4 is started.
+2023/05/03 09:33:57 [INFO]client.go:166: [START] Zinx Client LocalAddr: 127.0.0.1:60200, RemoteAddr: 127.0.0.1:7777
+2023/05/03 09:33:57 [INFO]connmanager.go:36: connection add to ConnManager successfully: conn num = 1
+2023/05/03 09:33:57 [INFO]connection.go:452: ZINX CallOnConnStart....
+2023/05/03 09:33:57 [INFO]connection.go:452: ZINX CallOnConnStart....
+2023/05/03 09:33:57 [INFO]connection.go:148: [Reader Goroutine is running]
+2023/05/03 09:33:57 [ERROR]connection.go:207: Connection Start() error: runtime error: invalid memory address or nil pointer dereference
+2023/05/03 09:34:08 [INFO]server.go:302: [STOP] Zinx server , name Splendor
+2023/05/03 09:34:08 [INFO]connmanager.go:85: Clear All Connections successfully: conn num = 0
+2023/05/03 09:35:38 [INFO]msghandler.go:105: Add Router msgID = 1
+2023/05/03 09:35:38 [INFO]msghandler.go:105: Add Router msgID = 2
+2023/05/03 09:35:38 [INFO]server.go:277: [START] Server name: Splendor,listener at IP: 127.0.0.1, Port 7777 is starting
+2023/05/03 09:35:38 [INFO]msghandler.go:110: Worker ID = 1 is started.
+2023/05/03 09:35:38 [INFO]msghandler.go:110: Worker ID = 0 is started.
+2023/05/03 09:35:38 [INFO]msghandler.go:110: Worker ID = 3 is started.
+2023/05/03 09:35:38 [INFO]msghandler.go:110: Worker ID = 2 is started.
+2023/05/03 09:35:38 [INFO]msghandler.go:110: Worker ID = 4 is started.
+2023/05/03 09:35:38 [INFO]msghandler.go:110: Worker ID = 8 is started.
+2023/05/03 09:35:38 [INFO]msghandler.go:110: Worker ID = 7 is started.
+2023/05/03 09:35:38 [INFO]msghandler.go:110: Worker ID = 9 is started.
+2023/05/03 09:35:38 [INFO]msghandler.go:110: Worker ID = 5 is started.
+2023/05/03 09:35:38 [INFO]msghandler.go:110: Worker ID = 6 is started.
+2023/05/03 09:35:41 [INFO]client.go:166: [START] Zinx Client LocalAddr: 127.0.0.1:60222, RemoteAddr: 127.0.0.1:7777
+2023/05/03 09:35:41 [INFO]connection.go:452: ZINX CallOnConnStart....
+2023/05/03 09:35:41 [INFO]connmanager.go:36: connection add to ConnManager successfully: conn num = 1
+2023/05/03 09:35:41 [INFO]connection.go:148: [Reader Goroutine is running]
+2023/05/03 09:35:41 [INFO]connection.go:452: ZINX CallOnConnStart....
+2023/05/03 09:35:41 [ERROR]connection.go:207: Connection Start() error: runtime error: invalid memory address or nil pointer dereference
+2023/05/03 09:36:29 [INFO]server.go:302: [STOP] Zinx server , name Splendor
+2023/05/03 09:36:29 [INFO]connmanager.go:85: Clear All Connections successfully: conn num = 0
+2023/05/03 09:53:21 [INFO]msghandler.go:105: Add Router msgID = 1
+2023/05/03 09:53:21 [INFO]msghandler.go:105: Add Router msgID = 2
+2023/05/03 09:53:21 [INFO]server.go:277: [START] Server name: Splendor,listener at IP: 127.0.0.1, Port 7777 is starting
+2023/05/03 09:53:21 [INFO]msghandler.go:110: Worker ID = 0 is started.
+2023/05/03 09:53:21 [INFO]msghandler.go:110: Worker ID = 2 is started.
+2023/05/03 09:53:21 [INFO]msghandler.go:110: Worker ID = 6 is started.
+2023/05/03 09:53:21 [INFO]msghandler.go:110: Worker ID = 4 is started.
+2023/05/03 09:53:21 [INFO]msghandler.go:110: Worker ID = 3 is started.
+2023/05/03 09:53:21 [INFO]msghandler.go:110: Worker ID = 7 is started.
+2023/05/03 09:53:21 [INFO]msghandler.go:110: Worker ID = 1 is started.
+2023/05/03 09:53:21 [INFO]msghandler.go:110: Worker ID = 9 is started.
+2023/05/03 09:53:21 [INFO]msghandler.go:110: Worker ID = 8 is started.
+2023/05/03 09:53:21 [INFO]msghandler.go:110: Worker ID = 5 is started.
+2023/05/03 09:53:24 [INFO]client.go:166: [START] Zinx Client LocalAddr: 127.0.0.1:60397, RemoteAddr: 127.0.0.1:7777
+2023/05/03 09:53:24 [INFO]connection.go:452: ZINX CallOnConnStart....
+2023/05/03 09:53:24 [INFO]connection.go:148: [Reader Goroutine is running]
+2023/05/03 09:53:24 [INFO]connmanager.go:36: connection add to ConnManager successfully: conn num = 1
+2023/05/03 09:53:24 [INFO]connection.go:452: ZINX CallOnConnStart....
+2023/05/03 09:53:24 [ERROR]connection.go:207: Connection Start() error: runtime error: invalid memory address or nil pointer dereference
+2023/05/03 09:54:01 [INFO]server.go:302: [STOP] Zinx server , name Splendor
+2023/05/03 09:54:01 [INFO]connmanager.go:85: Clear All Connections successfully: conn num = 0
+2023/05/03 09:54:01 [ERROR]connection.go:169: read msg head [read datalen=0], error = read tcp 127.0.0.1:60397->127.0.0.1:7777: read: connection reset by peer
+2023/05/03 09:54:01 [INFO]connection.go:170: 127.0.0.1:7777 [conn Reader exit!]
+2023/05/03 09:54:01 [INFO]connection.go:446: Conn Stop()...ConnID = 0
+2023/05/03 10:55:36 [INFO]msghandler.go:105: Add Router msgID = 1
+2023/05/03 10:55:36 [INFO]msghandler.go:105: Add Router msgID = 2
+2023/05/03 10:55:36 [INFO]server.go:277: [START] Server name: Splendor,listener at IP: 127.0.0.1, Port 7777 is starting
+2023/05/03 10:55:36 [INFO]msghandler.go:110: Worker ID = 0 is started.
+2023/05/03 10:55:36 [INFO]msghandler.go:110: Worker ID = 1 is started.
+2023/05/03 10:55:36 [INFO]msghandler.go:110: Worker ID = 6 is started.
+2023/05/03 10:55:36 [INFO]msghandler.go:110: Worker ID = 2 is started.
+2023/05/03 10:55:36 [INFO]msghandler.go:110: Worker ID = 3 is started.
+2023/05/03 10:55:36 [INFO]msghandler.go:110: Worker ID = 4 is started.
+2023/05/03 10:55:36 [INFO]msghandler.go:110: Worker ID = 5 is started.
+2023/05/03 10:55:36 [INFO]msghandler.go:110: Worker ID = 9 is started.
+2023/05/03 10:55:36 [INFO]msghandler.go:110: Worker ID = 7 is started.
+2023/05/03 10:55:36 [INFO]msghandler.go:110: Worker ID = 8 is started.
+2023/05/03 10:55:42 [INFO]connmanager.go:36: connection add to ConnManager successfully: conn num = 1
+2023/05/03 10:55:42 [INFO]client.go:166: [START] Zinx Client LocalAddr: 127.0.0.1:60753, RemoteAddr: 127.0.0.1:7777
+2023/05/03 10:55:42 [INFO]connection.go:452: ZINX CallOnConnStart....
+2023/05/03 10:55:42 [INFO]connection.go:452: ZINX CallOnConnStart....
+2023/05/03 10:55:42 [INFO]connection.go:148: [Reader Goroutine is running]
+2023/05/03 10:55:42 [INFO]connection.go:148: [Reader Goroutine is running]
+2023/05/03 10:55:45 [DEBUG]connection.go:172: read buffer 000000010000000470696e67 
+2023/05/03 10:55:45 [DEBUG]connection.go:187: read buffer 000000010000000470696e67 
+2023/05/03 10:55:45 [DEBUG]msghandler.go:69: SendMsgToTaskQueue-->70696e67
+2023/05/03 10:55:52 [DEBUG]connection.go:172: read buffer 0000000200000012e69fa5e8afa2e688bfe997b4e58897e8a1a8 
+2023/05/03 10:55:52 [DEBUG]connection.go:187: read buffer 0000000200000012e69fa5e8afa2e688bfe997b4e58897e8a1a8 
+2023/05/03 10:55:52 [DEBUG]msghandler.go:69: SendMsgToTaskQueue-->e69fa5e8afa2e688bfe997b4e58897e8a1a8
+2023/05/03 10:55:52 [DEBUG]connection.go:172: read buffer 000000030000001e0a0d080112057465737431180120040a0d08021205746573743218032004 
+2023/05/03 10:55:52 [DEBUG]connection.go:187: read buffer 000000030000001e0a0d080112057465737431180120040a0d08021205746573743218032004 
+2023/05/03 10:55:52 [ERROR]msghandler.go:82: api msgID = 3 is not FOUND!
+2023/05/03 10:56:19 [ERROR]connection.go:169: read msg head [read datalen=0], error = EOF
+2023/05/03 10:56:19 [INFO]connection.go:170: 127.0.0.1:60753 [conn Reader exit!]
+2023/05/03 10:56:19 [INFO]connmanager.go:47: connection Remove ConnID=0 successfully: conn num = 0
+2023/05/03 10:56:19 [INFO]connection.go:446: Conn Stop()...ConnID = 0
+2023/05/03 10:56:31 [INFO]server.go:302: [STOP] Zinx server , name Splendor
+2023/05/03 10:56:31 [INFO]connmanager.go:85: Clear All Connections successfully: conn num = 0
+2023/05/03 11:46:12 [INFO]msghandler.go:105: Add Router msgID = 1
+2023/05/03 11:46:12 [INFO]msghandler.go:105: Add Router msgID = 2
+2023/05/03 11:46:12 [INFO]server.go:277: [START] Server name: Splendor,listener at IP: 127.0.0.1, Port 7777 is starting
+2023/05/03 11:46:12 [INFO]msghandler.go:110: Worker ID = 0 is started.
+2023/05/03 11:46:12 [INFO]msghandler.go:110: Worker ID = 7 is started.
+2023/05/03 11:46:12 [INFO]msghandler.go:110: Worker ID = 4 is started.
+2023/05/03 11:46:12 [INFO]msghandler.go:110: Worker ID = 5 is started.
+2023/05/03 11:46:12 [INFO]msghandler.go:110: Worker ID = 6 is started.
+2023/05/03 11:46:12 [INFO]msghandler.go:110: Worker ID = 9 is started.
+2023/05/03 11:46:12 [INFO]msghandler.go:110: Worker ID = 8 is started.
+2023/05/03 11:46:12 [INFO]msghandler.go:110: Worker ID = 3 is started.
+2023/05/03 11:46:12 [INFO]msghandler.go:110: Worker ID = 2 is started.
+2023/05/03 11:46:12 [INFO]msghandler.go:110: Worker ID = 1 is started.
+2023/05/03 11:46:14 [INFO]connmanager.go:36: connection add to ConnManager successfully: conn num = 1
+2023/05/03 11:46:14 [INFO]connection.go:452: ZINX CallOnConnStart....
+2023/05/03 11:46:14 [INFO]client.go:166: [START] Zinx Client LocalAddr: 127.0.0.1:61039, RemoteAddr: 127.0.0.1:7777
+2023/05/03 11:46:14 [INFO]connection.go:148: [Reader Goroutine is running]
+2023/05/03 11:46:14 [INFO]connection.go:452: ZINX CallOnConnStart....
+2023/05/03 11:46:14 [INFO]connection.go:148: [Reader Goroutine is running]
+2023/05/03 11:46:16 [DEBUG]connection.go:172: read buffer 000000010000000470696e67 
+2023/05/03 11:46:16 [DEBUG]connection.go:187: read buffer 000000010000000470696e67 
+2023/05/03 11:46:16 [DEBUG]msghandler.go:69: SendMsgToTaskQueue-->70696e67
+2023/05/03 11:46:19 [DEBUG]connection.go:172: read buffer 0000000200000012e69fa5e8afa2e688bfe997b4e58897e8a1a8 
+2023/05/03 11:46:19 [DEBUG]connection.go:187: read buffer 0000000200000012e69fa5e8afa2e688bfe997b4e58897e8a1a8 
+2023/05/03 11:46:19 [DEBUG]msghandler.go:69: SendMsgToTaskQueue-->e69fa5e8afa2e688bfe997b4e58897e8a1a8
+2023/05/03 11:46:19 [INFO]connection.go:121: Writer Goroutine is running
+2023/05/03 11:46:19 [ERROR]connection.go:169: read msg head [read datalen=0], error = read tcp 127.0.0.1:7777->127.0.0.1:61039: read: connection reset by peer
+2023/05/03 11:46:19 [INFO]connection.go:170: 127.0.0.1:61039 [conn Reader exit!]
+2023/05/03 11:46:19 [INFO]connmanager.go:47: connection Remove ConnID=0 successfully: conn num = 0
+2023/05/03 11:46:19 [INFO]connection.go:446: Conn Stop()...ConnID = 0
+2023/05/03 11:46:19 [INFO]connection.go:141: 127.0.0.1:61039 [conn Writer exit!]
+2023/05/03 11:52:59 [INFO]client.go:166: [START] Zinx Client LocalAddr: 127.0.0.1:61179, RemoteAddr: 127.0.0.1:7777
+2023/05/03 11:52:59 [INFO]connmanager.go:36: connection add to ConnManager successfully: conn num = 1
+2023/05/03 11:52:59 [INFO]connection.go:452: ZINX CallOnConnStart....
+2023/05/03 11:52:59 [INFO]connection.go:452: ZINX CallOnConnStart....
+2023/05/03 11:52:59 [INFO]connection.go:148: [Reader Goroutine is running]
+2023/05/03 11:52:59 [INFO]connection.go:148: [Reader Goroutine is running]
+2023/05/03 11:53:00 [DEBUG]connection.go:172: read buffer 0000000200000012e69fa5e8afa2e688bfe997b4e58897e8a1a8 
+2023/05/03 11:53:00 [DEBUG]connection.go:187: read buffer 0000000200000012e69fa5e8afa2e688bfe997b4e58897e8a1a8 
+2023/05/03 11:53:00 [DEBUG]msghandler.go:69: SendMsgToTaskQueue-->e69fa5e8afa2e688bfe997b4e58897e8a1a8
+2023/05/03 11:53:00 [INFO]connection.go:121: Writer Goroutine is running
+2023/05/03 11:53:00 [DEBUG]connection.go:172: read buffer 000000030000001e0a0d080112057465737431180120040a0d08021205746573743218032004 
+2023/05/03 11:53:00 [DEBUG]connection.go:187: read buffer 000000030000001e0a0d080112057465737431180120040a0d08021205746573743218032004 
+2023/05/03 11:53:00 [ERROR]msghandler.go:82: api msgID = 3 is not FOUND!
+2023/05/03 11:53:08 [INFO]client.go:213: [STOP] Zinx Client LocalAddr: 127.0.0.1:61179, RemoteAddr: 127.0.0.1:7777
+2023/05/03 11:53:08 [ERROR]connection.go:169: read msg head [read datalen=0], error = EOF
+2023/05/03 11:53:08 [INFO]connection.go:170: 127.0.0.1:61179 [conn Reader exit!]
+2023/05/03 11:53:08 [INFO]connmanager.go:47: connection Remove ConnID=1 successfully: conn num = 0
+2023/05/03 11:53:08 [INFO]connection.go:446: Conn Stop()...ConnID = 1
+2023/05/03 11:53:08 [INFO]connection.go:141: 127.0.0.1:61179 [conn Writer exit!]
+2023/05/03 11:53:12 [INFO]server.go:302: [STOP] Zinx server , name Splendor
+2023/05/03 11:53:12 [INFO]connmanager.go:85: Clear All Connections successfully: conn num = 0
